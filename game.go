@@ -25,56 +25,61 @@ type Game struct {
 // }
 
 func (game *Game) PrintBoard() {
-	// for a := BOARDHEIGHT; a > 0; a-- {
+
+	// for a := BOARDHEIGHT - 1; a >= 0; a-- {
 	// 	for i := 0; i < BOARDWIDTH; i++ {
 	// 		fmt.Print("| ")
-	// 		fmt.Print(game.GameBoard[i][BOARDHEIGHT-1])
+	// 		if game.GameBoard[a][i] == "" {
+	// 			fmt.Print(" ")
+	// 		} else {
+	// 			fmt.Print(game.GameBoard[a][i])
+	// 		}
 	// 		fmt.Print(" |")
+	//
 	// 	}
 	// 	fmt.Println()
 	// }
-	for a := BOARDHEIGHT - 1; a >= 0; a-- {
-		for i := 0; i < BOARDWIDTH; i++ {
+	for i := 0; i < BOARDHEIGHT; i++ {
+		for j := 0; j < BOARDWIDTH; j++ {
 			fmt.Print("| ")
-			if game.GameBoard[a][i] == "" {
+			if game.GameBoard[i][j] == "" {
 				fmt.Print(" ")
 			} else {
-				fmt.Print(game.GameBoard[a][i])
+				fmt.Print(game.GameBoard[i][j])
 			}
 			fmt.Print(" |")
-
 		}
 		fmt.Println()
 	}
 	//fmt.Print(game.GameBoard)
 }
 func (game *Game) CheckWinner() bool {
-	player := game.LastPlayer
-	xpos := game.LastMove[0]
-	ypos := game.LastMove[1]
-
-	numToWin := 3
+	// player := game.LastPlayer
+	// row := game.LastMove[0]
+	// col := game.LastMove[1]
+	//
+	// numToWin := 3
 
 	//check horiz
 	//check to the left
-	for i := 1; xpos-i >= 0; i++ {
-		if game.GameBoard[xpos-i][ypos] == player {
-			numToWin--
-		} else {
-			break
-		}
-	}
-	//check to the right
-	for j := 1; xpos+j <= BOARDWIDTH-1; j++ {
-		if game.GameBoard[xpos+j][ypos] == player {
-			numToWin--
-		} else {
-			break
-		}
-	}
-	if numToWin <= 0 {
-		return true
-	}
+	// for i := 1; xpos-i >= 0; i++ {
+	// 	if game.GameBoard[xpos-i][ypos] == player {
+	// 		numToWin--
+	// 	} else {
+	// 		break
+	// 	}
+	// }
+	// //check to the right
+	// for j := 1; xpos+j <= BOARDWIDTH-1; j++ {
+	// 	if game.GameBoard[xpos+j][ypos] == player {
+	// 		numToWin--
+	// 	} else {
+	// 		break
+	// 	}
+	// }
+	// if numToWin <= 0 {
+	// 	return true
+	// }
 	return false
 	//check vertical
 
@@ -85,6 +90,10 @@ func main() {
 	var mygame Game
 	mygame.GameBoard[0][0] = "X"
 	mygame.GameBoard[0][1] = "O"
+	mygame.GameBoard[0][2] = "O"
+	mygame.GameBoard[0][3] = "O"
+	mygame.GameBoard[0][4] = "O"
+
 	mygame.PrintBoard()
 	mygame.LastPlayer = "X"
 	mygame.LastMove = []int{2, 0}
