@@ -32,10 +32,11 @@ func (game *Game) PrintBoard() string {
 			if game.GameBoard[i][j] == "" {
 				output += (" ")
 			} else {
-				fmt.Print(game.GameBoard[i][j])
+				output += game.GameBoard[i][j]
 			}
 			output += (" |")
 		}
+		output += "\n"
 	}
 	return output
 
