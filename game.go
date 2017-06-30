@@ -8,11 +8,11 @@ const (
 )
 
 type Game struct {
-	GameBoard  [BOARDHEIGHT][BOARDWIDTH]string //check these are in the right order
+	GameBoard  [BOARDHEIGHT][BOARDWIDTH]string
 	heights    [BOARDWIDTH]int
 	NumMoves   int
 	IsComplete bool
-	LastMove   []int //x pos, y pos
+	LastMove   []int //col #, row #
 	LastPlayer string
 }
 
@@ -24,35 +24,23 @@ type Game struct {
 // 	return nil
 // }
 
-func (game *Game) PrintBoard() {
-
-	// for a := BOARDHEIGHT - 1; a >= 0; a-- {
-	// 	for i := 0; i < BOARDWIDTH; i++ {
-	// 		fmt.Print("| ")
-	// 		if game.GameBoard[a][i] == "" {
-	// 			fmt.Print(" ")
-	// 		} else {
-	// 			fmt.Print(game.GameBoard[a][i])
-	// 		}
-	// 		fmt.Print(" |")
-	//
-	// 	}
-	// 	fmt.Println()
-	// }
+func (game *Game) PrintBoard() string {
+	var output string
 	for i := 0; i < BOARDHEIGHT; i++ {
 		for j := 0; j < BOARDWIDTH; j++ {
-			fmt.Print("| ")
+			output += ("| ")
 			if game.GameBoard[i][j] == "" {
-				fmt.Print(" ")
+				output += (" ")
 			} else {
 				fmt.Print(game.GameBoard[i][j])
 			}
-			fmt.Print(" |")
+			output += (" |")
 		}
-		fmt.Println()
 	}
-	//fmt.Print(game.GameBoard)
+	return output
+
 }
+
 func (game *Game) CheckWinner() bool {
 	// player := game.LastPlayer
 	// row := game.LastMove[0]
@@ -60,8 +48,8 @@ func (game *Game) CheckWinner() bool {
 	//
 	// numToWin := 3
 
-	//check horiz
-	//check to the left
+	// check horiz
+	// // check to the left
 	// for i := 1; xpos-i >= 0; i++ {
 	// 	if game.GameBoard[xpos-i][ypos] == player {
 	// 		numToWin--
@@ -94,7 +82,8 @@ func main() {
 	mygame.GameBoard[0][3] = "O"
 	mygame.GameBoard[0][4] = "O"
 
-	mygame.PrintBoard()
+	board := mygame.PrintBoard()
+	fmt.Print(board)
 	mygame.LastPlayer = "X"
 	mygame.LastMove = []int{2, 0}
 	a := mygame.CheckWinner()
