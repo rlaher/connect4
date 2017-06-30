@@ -26,6 +26,58 @@ var testcases = []struct {
 		[]int{0, 0},
 		"O",
 	},
+	{
+		[BOARDHEIGHT][BOARDWIDTH]string{
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "X", "X", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+		},
+		true,
+		[]int{0, 0},
+		"O",
+	},
+	{
+		[BOARDHEIGHT][BOARDWIDTH]string{
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "O", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"X", "X", "O", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "X", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+		},
+		true,
+		[]int{0, 0},
+		"O",
+	},
+	{
+		[BOARDHEIGHT][BOARDWIDTH]string{
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "O", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"X", "X", "O", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "X", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+		},
+		false,
+		[]int{5, 3},
+		"X",
+	},
+	// {
+	// 	[BOARDHEIGHT][BOARDWIDTH]string{
+	// 		{"O", "O", "O", "X", "X", "X", "O"},
+	// 		{"O", "O", "O", "X", "O", "X", "O"},
+	// 		{"O", "O", "X", "X", "X", "X", "O"},
+	// 		{"X", "X", "O", "X", "O", "O", "X"},
+	// 		{"X", "X", "X", "O", "X", "O", "X"},
+	// 		{"X", "X", "X", "O", "O", "O", "X"},
+	// 	},
+	// 	true,
+	// 	[]int{3, 3},
+	// 	"X",
+	// },
 }
 
 func TestCheckWin(t *testing.T) {
@@ -34,10 +86,16 @@ func TestCheckWin(t *testing.T) {
 		myGame.GameBoard = v.mygame
 		myGame.LastMove = v.pos
 		myGame.LastPlayer = v.player
+
+		fmt.Println("player symbol")
+		fmt.Println(v.player)
+		fmt.Println(myGame.LastPlayer)
 		expected := v.result
 		actual := myGame.CheckWinner()
 		fmt.Println("index:")
 		fmt.Println(myGame.LastMove)
+		fmt.Println("player symbol")
+		fmt.Println(myGame.LastPlayer)
 		fmt.Print(myGame.PrintBoard())
 		if actual != expected {
 			t.Fatalf("Check Winner didn't work, expected %d, got %d", expected, actual)
