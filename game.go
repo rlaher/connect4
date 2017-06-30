@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 const (
 	BOARDHEIGHT = 6
 	BOARDWIDTH  = 7
@@ -75,21 +73,12 @@ func (game *Game) CheckWinner() bool {
 	//check vertical
 	//only need to check the 3 tokens below
 	for i := 1; i <= 3; i++ {
-		fmt.Println("i")
-		fmt.Println(i)
-		fmt.Println("row+i")
-		fmt.Println(row + i)
-		fmt.Println("player:")
-		fmt.Println(player)
+
 		if row+i < 6 {
-			fmt.Println("game.GameBoard[row+i][col]")
-			fmt.Println(game.GameBoard[row+i][col])
 			if game.GameBoard[row+i][col] == player {
-				fmt.Println("did we make it")
 				numToWin--
 			}
 		} else {
-			fmt.Printf("before break")
 			break
 		}
 	}
@@ -123,21 +112,26 @@ func (game *Game) CheckWinner() bool {
 	numToWin = 3
 	//check top right direction
 	for i := 1; col+i <= BOARDWIDTH-1 && row-i >= 0; i++ {
+
 		if game.GameBoard[row-i][col+i] == player {
 			numToWin--
 		} else {
 			break
 		}
 	}
+
 	//check bottom left direction
 	for j := 1; col-j >= 0 && row+j <= BOARDHEIGHT-1; j++ {
+
 		if game.GameBoard[row+j][col-j] == player {
 			numToWin--
 		} else {
 			break
 		}
 	}
-
+	if numToWin <= 0 {
+		return true
+	}
 	return false
 }
 

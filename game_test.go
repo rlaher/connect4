@@ -62,22 +62,22 @@ var testcases = []struct {
 			{"X", "X", "X", "O", "O", "O", "X"},
 		},
 		false,
-		[]int{5, 3},
+		[]int{5, 4},
 		"X",
 	},
-	// {
-	// 	[BOARDHEIGHT][BOARDWIDTH]string{
-	// 		{"O", "O", "O", "X", "X", "X", "O"},
-	// 		{"O", "O", "O", "X", "O", "X", "O"},
-	// 		{"O", "O", "X", "X", "X", "X", "O"},
-	// 		{"X", "X", "O", "X", "O", "O", "X"},
-	// 		{"X", "X", "X", "O", "X", "O", "X"},
-	// 		{"X", "X", "X", "O", "O", "O", "X"},
-	// 	},
-	// 	true,
-	// 	[]int{3, 3},
-	// 	"X",
-	// },
+	{
+		[BOARDHEIGHT][BOARDWIDTH]string{
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "O", "X", "O"},
+			{"O", "O", "X", "X", "X", "X", "O"},
+			{"X", "X", "O", "X", "O", "O", "X"},
+			{"X", "X", "X", "O", "X", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+		},
+		true,
+		[]int{3, 3},
+		"X",
+	},
 }
 
 func TestCheckWin(t *testing.T) {
@@ -87,9 +87,6 @@ func TestCheckWin(t *testing.T) {
 		myGame.LastMove = v.pos
 		myGame.LastPlayer = v.player
 
-		fmt.Println("player symbol")
-		fmt.Println(v.player)
-		fmt.Println(myGame.LastPlayer)
 		expected := v.result
 		actual := myGame.CheckWinner()
 		fmt.Println("index:")
