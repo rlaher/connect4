@@ -43,36 +43,56 @@ func (game *Game) PrintBoard() string {
 }
 
 func (game *Game) CheckWinner() bool {
-	// player := game.LastPlayer
-	// row := game.LastMove[0]
-	// col := game.LastMove[1]
-	//
-	// numToWin := 3
+	player := game.LastPlayer
+	col := game.LastMove[1]
+	row := game.LastMove[0]
 
-	// check horiz
-	// // check to the left
-	// for i := 1; xpos-i >= 0; i++ {
-	// 	if game.GameBoard[xpos-i][ypos] == player {
-	// 		numToWin--
-	// 	} else {
-	// 		break
-	// 	}
-	// }
-	// //check to the right
-	// for j := 1; xpos+j <= BOARDWIDTH-1; j++ {
-	// 	if game.GameBoard[xpos+j][ypos] == player {
-	// 		numToWin--
-	// 	} else {
-	// 		break
-	// 	}
-	// }
-	// if numToWin <= 0 {
-	// 	return true
-	// }
-	return false
+	numToWin := 3
+
+	//check horiz
+	// check to the left
+	for i := 1; col-i >= 0; i++ {
+		if game.GameBoard[row][col-i] == player {
+			numToWin--
+		} else {
+			break
+		}
+	}
+	//check to the right
+	for j := 1; col+j <= BOARDWIDTH-1; j++ {
+		if game.GameBoard[row][col+j] == player {
+			numToWin--
+		} else {
+			break
+		}
+	}
+	fmt.Print("num to win:")
+	fmt.Println(numToWin)
+
+	if numToWin <= 0 {
+		return true
+	} else {
+		numToWin = 3
+	} //reset numToWin
+
 	//check vertical
-
+	//only need to check the 3 tokens below
+	for i := 1; i <= 3; i++ {
+		if row+i < 7 {
+			if game.GameBoard[row+i][col] == player {
+				numToWin--
+			}
+		} else {
+			break
+		}
+	}
+	if numToWin <= 0 {
+		return true
+	} else {
+		numToWin = 3
+	} //reset numToWin
 	//diagnol
+	return false
 }
 
 func main() {
@@ -85,8 +105,8 @@ func main() {
 
 	board := mygame.PrintBoard()
 	fmt.Print(board)
-	mygame.LastPlayer = "X"
-	mygame.LastMove = []int{2, 0}
+	mygame.LastPlayer = "O"
+	mygame.LastMove = []int{0, 2}
 	a := mygame.CheckWinner()
 	fmt.Print(a)
 }
