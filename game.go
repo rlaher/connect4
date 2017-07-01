@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const (
 	BOARDHEIGHT = 6
 	BOARDWIDTH  = 7
@@ -22,7 +24,7 @@ type Game struct {
 // 	return nil
 // }
 
-func (game *Game) PrintBoard() string {
+func (game *Game) StringBoard() string {
 	var output string
 	for i := 0; i < BOARDHEIGHT; i++ {
 		for j := 0; j < BOARDWIDTH; j++ {
@@ -44,7 +46,6 @@ func (game *Game) CheckWinner() bool {
 	player := game.LastPlayer
 	col := game.LastMove[1]
 	row := game.LastMove[0]
-
 	numToWin := 3
 
 	//check horiz
@@ -66,6 +67,7 @@ func (game *Game) CheckWinner() bool {
 	}
 
 	if numToWin <= 0 {
+		game.IsComplete = true
 		return true
 	}
 	numToWin = 3
@@ -83,6 +85,8 @@ func (game *Game) CheckWinner() bool {
 		}
 	}
 	if numToWin <= 0 {
+		game.IsComplete = true
+
 		return true
 	}
 	numToWin = 3
@@ -107,6 +111,8 @@ func (game *Game) CheckWinner() bool {
 	}
 
 	if numToWin <= 0 {
+		game.IsComplete = true
+
 		return true
 	}
 	numToWin = 3
@@ -130,23 +136,40 @@ func (game *Game) CheckWinner() bool {
 		}
 	}
 	if numToWin <= 0 {
+		game.IsComplete = true
+
 		return true
 	}
 	return false
 }
 
 func main() {
-	// var mygame Game
-	// mygame.GameBoard[0][0] = "X"
-	// mygame.GameBoard[0][1] = "O"
-	// mygame.GameBoard[0][2] = "O"
-	// mygame.GameBoard[0][3] = "O"
-	// mygame.GameBoard[0][4] = "O"
-	//
-	// board := mygame.PrintBoard()
-	// fmt.Print(board)
-	// mygame.LastPlayer = "O"
-	// mygame.LastMove = []int{0, 2}
-	// a := mygame.CheckWinner()
-	// fmt.Print(a)
+	var mygame Game
+	player1 := Player{
+		"Bob", "O", &mygame,
+	}
+	player2 := Player{
+		"Joe", "X", &mygame,
+	}
+	for !mygame.IsComplete {
+		//player one gets to go
+		if !mygame.IsComplete {
+			err := player1.MakeMove()
+			for err != nil {
+				fmt.Println(err.Error())
+				err = player1.MakeMove()
+			}
+			mygame.IsComplete = mygame.CheckWinner()
+		}
+		//player2 gets to go
+		if !mygame.IsComplete {
+			err := player2.MakeMove()
+			for err != nil {
+				fmt.Println(err.Error())
+				err = player2.MakeMove()
+			}
+			mygame.IsComplete = mygame.CheckWinner()
+		}
+	}
+	fmt.Println("Game over!")
 }

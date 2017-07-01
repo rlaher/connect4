@@ -119,7 +119,7 @@ func TestCheckWin(t *testing.T) {
 		fmt.Println(myGame.LastMove)
 		fmt.Println("player symbol")
 		fmt.Println(myGame.LastPlayer)
-		fmt.Print(myGame.PrintBoard())
+		fmt.Print(myGame.StringBoard())
 		if actual != expected {
 			t.Fatalf("Check Winner didn't work, expected %d, got %d", expected, actual)
 		}
