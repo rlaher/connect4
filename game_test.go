@@ -78,6 +78,32 @@ var testcases = []struct {
 		[]int{3, 3},
 		"X",
 	},
+	{
+		[BOARDHEIGHT][BOARDWIDTH]string{
+			{"O", "O", "O", "O", "X", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "X", "X", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+		},
+		true,
+		[]int{0, 3},
+		"O",
+	},
+	{
+		[BOARDHEIGHT][BOARDWIDTH]string{
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "O", "O", "X", "X", "X", "O"},
+			{"O", "X", "X", "O", "O", "O", "X"},
+			{"X", "X", "X", "O", "O", "O", "X"},
+			{"O", "X", "X", "O", "O", "O", "X"},
+		},
+		false,
+		[]int{0, 6},
+		"O",
+	},
 }
 
 func TestCheckWin(t *testing.T) {
