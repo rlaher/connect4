@@ -9,10 +9,14 @@ import (
 func main() {
 	var mygame game.Game
 	player1 := player.Player{
-		"Bob", "O", &mygame,
+		Name:   "Bob",
+		Marker: "O",
+		Game:   &mygame,
 	}
-	player2 := Player{
-		"Joe", "X", &mygame,
+	player2 := player.Player{
+		Name:   "Joe",
+		Marker: "X",
+		Game:   &mygame,
 	}
 	for !mygame.IsComplete {
 		//player one gets to go
