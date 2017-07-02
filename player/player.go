@@ -12,12 +12,13 @@ type Player struct {
 	Game   *game.Game
 }
 
-func (player *Player) MakeMove() error {
-	var move int
+func (player *Player) MakeMove(move int) error {
+	//var move int
 	validmoves := []int{0, 1, 2, 3, 4, 5, 6}
 	var validmove bool
-	fmt.Printf("%s, What column would you like to play? (0-6)", player.Name)
-	fmt.Scan(&move)
+
+	// fmt.Printf("%s, What column would you like to play? (0-6)", player.Name)
+	// fmt.Scan(&move)
 
 	for _, v := range validmoves {
 		if move == v {
@@ -43,4 +44,8 @@ func (player *Player) MakeMove() error {
 	fmt.Print(player.Game.StringBoard())
 	return nil
 
+}
+func (player *Player) BotMove() {
+	//bot should randomly choose column
+	player.MakeMove(0)
 }

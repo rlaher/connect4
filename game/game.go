@@ -14,6 +14,11 @@ type Game struct {
 	LastPlayer string
 }
 
+func NewGame() *Game {
+	var game Game
+	return &game
+}
+
 func (game *Game) StringBoard() string {
 	var output string
 	for i := 0; i < BoardHeight; i++ {
