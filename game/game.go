@@ -5,6 +5,8 @@ const (
 	BoardWidth  = 7
 )
 const testing = "testing"
+const waiting = "Waiting for 2nd player"
+const gamestarts = "Game is starting!"
 
 type Game struct {
 	Status        string                        `json:"status"`
@@ -12,10 +14,12 @@ type Game struct {
 	PlayerSymbols []string                      `json:"playersymbols"`
 	Heights       [BoardWidth]int
 	NumMoves      int
+	IsStarted     bool
 	IsComplete    bool
-	LastMove      []int //col #, row #
-	NumPlayers    int
-	LastPlayer    string `json:"lastplayer"` //can probably delte
+
+	LastMove   []int //col #, row #
+	NumPlayers int
+	LastPlayer string `json:"lastplayer"` //can probably delte
 }
 
 type slot struct {
@@ -39,6 +43,17 @@ func NewGame() *Game {
 }
 func newGameBoard() [BoardHeight][BoardWidth]slot {
 	return [BoardHeight][BoardWidth]slot{}
+}
+
+func (game *Game) addPlayer() {
+	game.NumPlayers++
+	switch game.NumPlayers {
+	case 1:
+		game.Status = waiting
+	case 2:
+		game.Status = gamestarts
+		game.IsStarted = true
+	}
 }
 
 func (game *Game) StringBoard() string {
