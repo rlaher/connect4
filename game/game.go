@@ -4,21 +4,41 @@ const (
 	BoardHeight = 6
 	BoardWidth  = 7
 )
+const testing = "testing"
 
 type Game struct {
-	Status        string                          `json:"status"`
-	GameBoard     [BoardHeight][BoardWidth]string `json:"gameboard"`
-	PlayerSymbols []string                        `json:"playersymbols"`
+	Status        string                        `json:"status"`
+	GameBoard     [BoardHeight][BoardWidth]slot `json:"gameboard"`
+	PlayerSymbols []string                      `json:"playersymbols"`
 	Heights       [BoardWidth]int
 	NumMoves      int
 	IsComplete    bool
-	LastMove      []int  //col #, row #
-	LastPlayer    string `json:"lastplayer"`
+	LastMove      []int //col #, row #
+	NumPlayers    int
+	LastPlayer    string `json:"lastplayer"` //can probably delte
+}
+
+type slot struct {
+	Active bool   `json:"active"`
+	Symbol string `json:"symbol"`
 }
 
 func NewGame() *Game {
-	var game Game
+	game := Game{
+		Status:        testing,
+		GameBoard:     newGameBoard(),
+		PlayerSymbols: []string{0: "X", 1: "O"},
+		Heights:       [BoardWidth]int{},
+		NumMoves:      0,
+		IsComplete:    false,
+		LastMove:      []int{},
+		LastPlayer:    "",
+		NumPlayers:    0,
+	}
 	return &game
+}
+func newGameBoard() [BoardHeight][BoardWidth]slot {
+	return [BoardHeight][BoardWidth]slot{}
 }
 
 func (game *Game) StringBoard() string {
@@ -26,10 +46,10 @@ func (game *Game) StringBoard() string {
 	for i := 0; i < BoardHeight; i++ {
 		for j := 0; j < BoardWidth; j++ {
 			output += ("| ")
-			if game.GameBoard[i][j] == "" {
+			if game.GameBoard[i][j].Symbol == "" {
 				output += (" ")
 			} else {
-				output += game.GameBoard[i][j]
+				output += game.GameBoard[i][j].Symbol
 			}
 			output += (" |")
 		}
@@ -48,7 +68,7 @@ func (game *Game) CheckWinner() bool {
 	//check horiz
 	// check to the left
 	for i := 1; col-i >= 0; i++ {
-		if game.GameBoard[row][col-i] == player {
+		if game.GameBoard[row][col-i].Symbol == player {
 			numToWin--
 		} else {
 			break
@@ -56,7 +76,7 @@ func (game *Game) CheckWinner() bool {
 	}
 	//check to the right
 	for j := 1; col+j <= BoardWidth-1; j++ {
-		if game.GameBoard[row][col+j] == player {
+		if game.GameBoard[row][col+j].Symbol == player {
 			numToWin--
 		} else {
 			break
@@ -74,7 +94,7 @@ func (game *Game) CheckWinner() bool {
 	for i := 1; i <= 3; i++ {
 
 		if row+i < 6 {
-			if game.GameBoard[row+i][col] == player {
+			if game.GameBoard[row+i][col].Symbol == player {
 				numToWin--
 			}
 		} else {
@@ -92,7 +112,7 @@ func (game *Game) CheckWinner() bool {
 	//first check top to bottom left to right
 	//check top left
 	for i := 1; col-i >= 0 && row-i >= 0; i++ {
-		if game.GameBoard[row-i][col-i] == player {
+		if game.GameBoard[row-i][col-i].Symbol == player {
 			numToWin--
 		} else {
 			break
@@ -100,7 +120,7 @@ func (game *Game) CheckWinner() bool {
 	}
 	//check bottom right
 	for j := 1; col+j <= BoardWidth-1 && row+j <= BoardHeight-1; j++ {
-		if game.GameBoard[row+j][col+j] == player {
+		if game.GameBoard[row+j][col+j].Symbol == player {
 			numToWin--
 		} else {
 			break
@@ -116,7 +136,7 @@ func (game *Game) CheckWinner() bool {
 	//check top right direction
 	for i := 1; col+i <= BoardWidth-1 && row-i >= 0; i++ {
 
-		if game.GameBoard[row-i][col+i] == player {
+		if game.GameBoard[row-i][col+i].Symbol == player {
 			numToWin--
 		} else {
 			break
@@ -126,7 +146,7 @@ func (game *Game) CheckWinner() bool {
 	//check bottom left direction
 	for j := 1; col-j >= 0 && row+j <= BoardHeight-1; j++ {
 
-		if game.GameBoard[row+j][col-j] == player {
+		if game.GameBoard[row+j][col-j].Symbol == player {
 			numToWin--
 		} else {
 			break
