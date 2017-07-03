@@ -7,19 +7,21 @@ const (
 const testing = "testing"
 const waiting = "Waiting for 2nd player"
 const gamestarts = "Game is starting!"
+const gameover = "Game has finished!"
 
 type Game struct {
 	Status        string                        `json:"status"`
 	GameBoard     [BoardHeight][BoardWidth]slot `json:"gameboard"`
 	PlayerSymbols []string                      `json:"playersymbols"`
-	Heights       [BoardWidth]int
-	NumMoves      int
-	IsStarted     bool
-	IsComplete    bool
 
-	LastMove   []int //col #, row #
-	NumPlayers int
-	LastPlayer string `json:"lastplayer"` //can probably delte
+	Heights     [BoardWidth]int
+	NumMoves    int
+	IsStarted   bool
+	IsComplete  bool
+	playersTurn int
+	LastMove    []int //col #, row #
+	NumPlayers  int
+	LastPlayer  string `json:"lastplayer"` //can probably delte
 }
 
 type slot struct {
@@ -34,10 +36,12 @@ func NewGame() *Game {
 		PlayerSymbols: []string{0: "X", 1: "O"},
 		Heights:       [BoardWidth]int{},
 		NumMoves:      0,
+		IsStarted:     false,
 		IsComplete:    false,
 		LastMove:      []int{},
 		LastPlayer:    "",
 		NumPlayers:    0,
+		playersTurn:   0,
 	}
 	return &game
 }
@@ -72,6 +76,50 @@ func (game *Game) StringBoard() string {
 	}
 	return output
 
+}
+
+func (game *Game) MakeMove(playerNum int, move int) {
+	if game.isPlayersTurn(playerNum) {
+		if game.isValidMove(move) {
+
+			height := game.Heights[move]
+
+			game.GameBoard[5-height][move].Symbol = game.PlayerSymbols[playerNum]
+			game.GameBoard[5-height][move].Active = true
+			game.Heights[move]++
+			game.switchPlayersTurn(playerNum)
+			if game.CheckWinner() {
+				game.Status = gameover
+				game.IsComplete = true
+			}
+		}
+	}
+}
+func (game *Game) isPlayersTurn(playerNum int) bool {
+	return playerNum == game.playersTurn
+}
+
+func (game *Game) isValidMove(move int) bool {
+	validmoves := []int{0, 1, 2, 3, 4, 5, 6}
+	if game.Heights[move] == BoardHeight {
+		return false
+	}
+	for _, v := range validmoves {
+		if move == v {
+			return true
+		}
+	}
+	return false
+}
+
+// switchPlayersTurn switches the playersTurn variable to the id of the other player
+func (game *Game) switchPlayersTurn(playerNum int) {
+	switch playerNum {
+	case 0:
+		game.playersTurn = 1
+	case 1:
+		game.playersTurn = 0
+	}
 }
 
 func (game *Game) CheckWinner() bool {
