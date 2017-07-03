@@ -87,11 +87,12 @@ func (game *Game) MakeMove(playerNum int, move int) {
 			game.GameBoard[5-height][move].Symbol = game.PlayerSymbols[playerNum]
 			game.GameBoard[5-height][move].Active = true
 			game.Heights[move]++
-			game.switchPlayersTurn(playerNum)
-			if game.CheckWinner() {
+			if game.CheckWinner(playerNum, move, game.Heights[move]) {
 				game.Status = gameover
 				game.IsComplete = true
 			}
+			game.switchPlayersTurn(playerNum)
+
 		}
 	}
 }
@@ -122,16 +123,14 @@ func (game *Game) switchPlayersTurn(playerNum int) {
 	}
 }
 
-func (game *Game) CheckWinner() bool {
-	player := game.LastPlayer
-	col := game.LastMove[1]
-	row := game.LastMove[0]
+func (game *Game) CheckWinner(player int, col int, row int) bool {
+	symbol := game.PlayerSymbols[player]
 	numToWin := 3
 
 	//check horiz
 	// check to the left
 	for i := 1; col-i >= 0; i++ {
-		if game.GameBoard[row][col-i].Symbol == player {
+		if game.GameBoard[row][col-i].Symbol == symbol {
 			numToWin--
 		} else {
 			break
@@ -139,7 +138,7 @@ func (game *Game) CheckWinner() bool {
 	}
 	//check to the right
 	for j := 1; col+j <= BoardWidth-1; j++ {
-		if game.GameBoard[row][col+j].Symbol == player {
+		if game.GameBoard[row][col+j].Symbol == symbol {
 			numToWin--
 		} else {
 			break
@@ -157,7 +156,7 @@ func (game *Game) CheckWinner() bool {
 	for i := 1; i <= 3; i++ {
 
 		if row+i < 6 {
-			if game.GameBoard[row+i][col].Symbol == player {
+			if game.GameBoard[row+i][col].Symbol == symbol {
 				numToWin--
 			}
 		} else {
@@ -175,7 +174,7 @@ func (game *Game) CheckWinner() bool {
 	//first check top to bottom left to right
 	//check top left
 	for i := 1; col-i >= 0 && row-i >= 0; i++ {
-		if game.GameBoard[row-i][col-i].Symbol == player {
+		if game.GameBoard[row-i][col-i].Symbol == symbol {
 			numToWin--
 		} else {
 			break
@@ -183,7 +182,7 @@ func (game *Game) CheckWinner() bool {
 	}
 	//check bottom right
 	for j := 1; col+j <= BoardWidth-1 && row+j <= BoardHeight-1; j++ {
-		if game.GameBoard[row+j][col+j].Symbol == player {
+		if game.GameBoard[row+j][col+j].Symbol == symbol {
 			numToWin--
 		} else {
 			break
@@ -199,7 +198,7 @@ func (game *Game) CheckWinner() bool {
 	//check top right direction
 	for i := 1; col+i <= BoardWidth-1 && row-i >= 0; i++ {
 
-		if game.GameBoard[row-i][col+i].Symbol == player {
+		if game.GameBoard[row-i][col+i].Symbol == symbol {
 			numToWin--
 		} else {
 			break
@@ -209,7 +208,7 @@ func (game *Game) CheckWinner() bool {
 	//check bottom left direction
 	for j := 1; col-j >= 0 && row+j <= BoardHeight-1; j++ {
 
-		if game.GameBoard[row+j][col-j].Symbol == player {
+		if game.GameBoard[row+j][col-j].Symbol == symbol {
 			numToWin--
 		} else {
 			break
