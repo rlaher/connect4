@@ -6,12 +6,14 @@ const (
 )
 
 type Game struct {
-	GameBoard  [BoardHeight][BoardWidth]string
-	Heights    [BoardWidth]int
-	NumMoves   int
-	IsComplete bool
-	LastMove   []int //col #, row #
-	LastPlayer string
+	Status        string                          `json:"status"`
+	GameBoard     [BoardHeight][BoardWidth]string `json:"gameboard"`
+	PlayerSymbols []string                        `json:"playersymbols"`
+	Heights       [BoardWidth]int
+	NumMoves      int
+	IsComplete    bool
+	LastMove      []int  //col #, row #
+	LastPlayer    string `json:"lastplayer"`
 }
 
 func NewGame() *Game {
