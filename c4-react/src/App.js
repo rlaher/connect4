@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+var socket = new WebSocket("ws://localhost:8080/ws");
+
+
 class App extends Component {
   render() {
     return (

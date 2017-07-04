@@ -1,6 +1,10 @@
 package game
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+)
 
 const (
 	BoardHeight = 6
@@ -20,9 +24,7 @@ type Game struct {
 	IsStarted   bool
 	IsComplete  bool
 	playersTurn int
-	LastMove    []int //col #, row # //can delete
 	NumPlayers  int
-	LastPlayer  string `json:"lastplayer"` //can probably delte
 }
 
 type slot struct {
@@ -39,10 +41,9 @@ func NewGame() *Game {
 		NumMoves:      0,
 		IsStarted:     false,
 		IsComplete:    false,
-		LastMove:      []int{},
-		LastPlayer:    "",
-		NumPlayers:    0,
-		playersTurn:   0,
+
+		NumPlayers:  0,
+		playersTurn: 0,
 	}
 	return &game
 }
@@ -223,4 +224,12 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 		return true
 	}
 	return false
+}
+
+func (game *Game) JsonEncode() []byte {
+	json, err := json.Marshal(game)
+	if err != nil {
+		log.Fatal("Error in marshalling json:", err)
+	}
+	return json
 }
