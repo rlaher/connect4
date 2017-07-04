@@ -4,6 +4,16 @@ import './App.css';
 
 var socket = new WebSocket("ws://localhost:8080/ws");
 
+function clickHandler(e){
+    socket.send(1)
+    console.log("1 sent")
+}
+
+socket.onmessage = function(evt){
+    var newData = JSON.parse(evt.data);
+    console.log(evt.data); //remove later
+};
+
 
 class App extends Component {
   render() {
@@ -13,6 +23,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
+        <button id = "testbutton" onClick={clickHandler}>testing button </button>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
