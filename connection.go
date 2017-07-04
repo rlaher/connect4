@@ -47,14 +47,11 @@ func newConnectionPair() *connectionPair {
 		connections:   make(map[*connection]struct{}),
 		game:          game.NewGame(),
 	}
-	//FIGURE OUT THIS STUFF
+
 	go func() {
-		for {
-			select {
-			case <-cp.receiveMove:
-			}
-		}
+		<-cp.receiveMove
 	}()
+
 	return cp
 }
 
