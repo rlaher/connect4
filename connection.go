@@ -78,7 +78,6 @@ func (h *connectionPair) removeConnection(conn *connection) {
 
 // reader reads the moves from the clients ws-connection
 func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
-	fmt.Println("inside reader")
 	defer wg.Done()
 	for {
 		//Reading next move from connection here
@@ -89,6 +88,7 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 		}
 		fmt.Print("movemessage:")
 		fmt.Println(clientMoveMessage)
+		fmt.Println("move message done")
 
 		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32) //Getting FieldValue From Player Action
 		c.cp.game.MakeMove(c.playerNum, int(field))
@@ -148,11 +148,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	//inform the gameState about the new player
 	c.cp.game.AddPlayer()
-	fmt.Print(c.cp.game.Status)
-	fmt.Print("hi thur")
+	fmt.Print("printing game status:")
+	fmt.Println(c.cp.game.Status)
 	//telling connectionPair to broadcast the gameState
 	c.cp.receiveMove <- true
-	fmt.Println("after receive move <- true")
 	//creating the writer and reader goroutines
 	//the websocket connection is open as long as these goroutines are running
 	var wg sync.WaitGroup

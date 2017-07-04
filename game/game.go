@@ -2,7 +2,6 @@ package game
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
@@ -142,9 +141,7 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	}
 	//check to the right
 	for j := 1; col+j <= BoardWidth-1; j++ {
-		fmt.Println(col + j)
 
-		fmt.Println(game.GameBoard[row][col+j].Symbol)
 		if game.GameBoard[row][col+j].Symbol == symbol {
 			numToWin--
 
