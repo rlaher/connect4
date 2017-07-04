@@ -1,10 +1,11 @@
 package game
 
+import "fmt"
+
 const (
 	BoardHeight = 6
 	BoardWidth  = 7
 )
-const testing = "testing"
 const waiting = "Waiting for 2nd player"
 const gamestarts = "Game is starting!"
 const gameover = "Game has finished!"
@@ -31,7 +32,7 @@ type slot struct {
 
 func NewGame() *Game {
 	game := Game{
-		Status:        testing,
+		Status:        "blurgle",
 		GameBoard:     newGameBoard(),
 		PlayerSymbols: []string{0: "X", 1: "O"},
 		Heights:       [BoardWidth]int{},
@@ -132,7 +133,6 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	//check horiz
 	// check to the left
 	for i := 1; col-i >= 0; i++ {
-
 		if game.GameBoard[row][col-i].Symbol == symbol {
 			numToWin--
 		} else {
@@ -141,6 +141,9 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	}
 	//check to the right
 	for j := 1; col+j <= BoardWidth-1; j++ {
+		fmt.Println(col + j)
+
+		fmt.Println(game.GameBoard[row][col+j].Symbol)
 		if game.GameBoard[row][col+j].Symbol == symbol {
 			numToWin--
 
