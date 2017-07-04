@@ -1,6 +1,7 @@
 package main
 
 import (
+	"connect4/game"
 	"fmt"
 	"log"
 	"net/http"
@@ -38,15 +39,33 @@ func main() {
 	// 		mygame.IsComplete = mygame.CheckWinner()
 	// 	}
 	// }
-	// fmt.Println("Game over!")
-	gameRoom := NewGameRoom()
-	go gameRoom.run()
-	http.HandleFunc("/", HomeHandler)
-	http.HandleFunc("/room", func(w http.ResponseWriter, r *http.Request) {
-		ServeWs(gameRoom, w, r)
-	})
-	fmt.Println("Starting server on :8080")
-	http.ListenAndServe(":8080", nil)
+	// // fmt.Println("Game over!")
+	// gameRoom := NewGameRoom()
+	// go gameRoom.run()
+	// http.HandleFunc("/", HomeHandler)
+	// http.HandleFunc("/room", func(w http.ResponseWriter, r *http.Request) {
+	// 	ServeWs(gameRoom, w, r)
+	// })
+	// fmt.Println("Starting server on :8080")
+	// http.ListenAndServe(":8080", nil)
+
+	mygame := game.NewGame()
+	mygame.AddPlayer()
+	mygame.AddPlayer()
+	mygame.MakeMove(0, 0)
+	fmt.Print(mygame.StringBoard())
+	mygame.MakeMove(0, 1)
+	fmt.Print(mygame.StringBoard())
+	mygame.MakeMove(0, 2)
+	fmt.Print(mygame.StringBoard())
+	mygame.MakeMove(0, 3)
+	fmt.Print(mygame.StringBoard())
+	if !mygame.IsComplete {
+		mygame.MakeMove(0, 4)
+		fmt.Print(mygame.IsComplete)
+		fmt.Print(mygame.StringBoard())
+	}
+
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {

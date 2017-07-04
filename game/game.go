@@ -19,7 +19,7 @@ type Game struct {
 	IsStarted   bool
 	IsComplete  bool
 	playersTurn int
-	LastMove    []int //col #, row #
+	LastMove    []int //col #, row # //can delete
 	NumPlayers  int
 	LastPlayer  string `json:"lastplayer"` //can probably delte
 }
@@ -49,7 +49,7 @@ func newGameBoard() [BoardHeight][BoardWidth]slot {
 	return [BoardHeight][BoardWidth]slot{}
 }
 
-func (game *Game) addPlayer() {
+func (game *Game) AddPlayer() {
 	game.NumPlayers++
 	switch game.NumPlayers {
 	case 1:
@@ -65,7 +65,7 @@ func (game *Game) StringBoard() string {
 	for i := 0; i < BoardHeight; i++ {
 		for j := 0; j < BoardWidth; j++ {
 			output += ("| ")
-			if game.GameBoard[i][j].Symbol == "" {
+			if game.GameBoard[i][j].Active == false {
 				output += (" ")
 			} else {
 				output += game.GameBoard[i][j].Symbol
@@ -86,12 +86,14 @@ func (game *Game) MakeMove(playerNum int, move int) {
 
 			game.GameBoard[5-height][move].Symbol = game.PlayerSymbols[playerNum]
 			game.GameBoard[5-height][move].Active = true
-			game.Heights[move]++
-			if game.CheckWinner(playerNum, move, game.Heights[move]) {
+			if game.CheckWinner(playerNum, move, 5-game.Heights[move]) {
 				game.Status = gameover
 				game.IsComplete = true
 			}
+			game.Heights[move]++
+
 			game.switchPlayersTurn(playerNum)
+			game.NumMoves++
 
 		}
 	}
@@ -130,6 +132,7 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	//check horiz
 	// check to the left
 	for i := 1; col-i >= 0; i++ {
+
 		if game.GameBoard[row][col-i].Symbol == symbol {
 			numToWin--
 		} else {
@@ -140,13 +143,13 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	for j := 1; col+j <= BoardWidth-1; j++ {
 		if game.GameBoard[row][col+j].Symbol == symbol {
 			numToWin--
+
 		} else {
 			break
 		}
 	}
 
 	if numToWin <= 0 {
-		game.IsComplete = true
 		return true
 	}
 	numToWin = 3
@@ -164,7 +167,6 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 		}
 	}
 	if numToWin <= 0 {
-		game.IsComplete = true
 
 		return true
 	}
@@ -190,7 +192,6 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	}
 
 	if numToWin <= 0 {
-		game.IsComplete = true
 
 		return true
 	}
@@ -215,7 +216,6 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 		}
 	}
 	if numToWin <= 0 {
-		game.IsComplete = true
 
 		return true
 	}
