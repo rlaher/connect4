@@ -43,6 +43,8 @@ socket.onmessage = function(evt){
     document.getElementById("myboardstring5").innerHTML = newData.boardasstring5
     document.getElementById("myboardstring6").innerHTML = newData.boardasstring6
 
+    document.getElementById("status").innerHTML = newData.status
+
 };
 
 
@@ -53,7 +55,7 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2 id="status">Put game status here</h2>
         </div>
         <div id="buttons">
             <button id = "zero" onClick={clickHandler0}>col zero </button>

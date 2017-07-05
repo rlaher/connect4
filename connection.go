@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -52,7 +53,11 @@ func newConnectionPair() *connectionPair {
 		for {
 			<-cp.receiveMove
 			for c := range cp.connections {
-				c.doBroadcast <- true
+				select {
+				case c.doBroadcast <- true:
+				case <-time.After(5 * time.Second):
+					cp.removeConnection(c)
+				}
 			}
 		}
 	}()
@@ -77,8 +82,9 @@ func (h *connectionPair) removeConnection(conn *connection) {
 		delete(h.connections, conn)
 		close(conn.doBroadcast)
 	}
-	log.Println("Player disconnected")
+	log.Println("Player disconnected, connection pair removed")
 	//SHOULD DO SOMETHING HERE
+	h.game.Status = game.Broken
 }
 
 // reader reads the moves from the clients ws-connection

@@ -9,6 +9,7 @@ const (
 	BoardHeight = 6
 	BoardWidth  = 7
 )
+const Broken = "you broke it!"
 const waiting = "Waiting for 2nd player"
 const gamestarts = "Game is starting!"
 const gameover = "Game has finished!"
