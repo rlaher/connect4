@@ -9,11 +9,14 @@ const (
 	BoardHeight = 6
 	BoardWidth  = 7
 )
+
+//constants to be used as Game.Status
 const Broken = "you broke it!"
 const waiting = "Waiting for 2nd player"
 const gameprogress = "Game is in progress!"
 const gameover = "Game has finished!"
 
+//Game holds all the game data
 type Game struct {
 	Status        string                        `json:"status"`
 	GameBoard     [BoardHeight][BoardWidth]slot `json:"gameboard"`
@@ -33,11 +36,13 @@ type Game struct {
 	BoardAsString6 string `json:"boardasstring6"`
 }
 
+//struct for each slot on the board
 type slot struct {
 	Active bool   `json:"active"`
 	Symbol string `json:"symbol"`
 }
 
+//NewGame initializes new game with base values
 func NewGame() *Game {
 	game := Game{
 		Status:        "empty status",
@@ -58,6 +63,7 @@ func newGameBoard() [BoardHeight][BoardWidth]slot {
 	return [BoardHeight][BoardWidth]slot{}
 }
 
+//AddPlayer adds a new player to the game
 func (game *Game) AddPlayer() {
 	game.NumPlayers++
 	switch game.NumPlayers {
@@ -69,6 +75,7 @@ func (game *Game) AddPlayer() {
 	}
 }
 
+//StringBoard returns 6 string representation of board
 func (game *Game) StringBoard() (string1, string2, string3, string4, string5, string6 string) {
 	output := make([]string, 6)
 	for i := 0; i < BoardHeight; i++ {
@@ -87,6 +94,7 @@ func (game *Game) StringBoard() (string1, string2, string3, string4, string5, st
 
 }
 
+//MakeMove checks if criteria is met and then updates Game
 func (game *Game) MakeMove(playerNum int, move int) {
 	if game.isPlayersTurn(playerNum) {
 		if game.isValidMove(move) {
@@ -108,6 +116,7 @@ func (game *Game) MakeMove(playerNum int, move int) {
 		}
 	}
 }
+
 func (game *Game) isPlayersTurn(playerNum int) bool {
 	return playerNum == game.playersTurn
 }
@@ -125,7 +134,6 @@ func (game *Game) isValidMove(move int) bool {
 	return false
 }
 
-// switchPlayersTurn switches the playersTurn variable to the id of the other player
 func (game *Game) switchPlayersTurn(playerNum int) {
 	switch playerNum {
 	case 0:
@@ -135,6 +143,7 @@ func (game *Game) switchPlayersTurn(playerNum int) {
 	}
 }
 
+//CheckWinner checks if the last move played ended the game
 func (game *Game) CheckWinner(player int, col int, row int) bool {
 	symbol := game.PlayerSymbols[player]
 	numToWin := 3
@@ -232,6 +241,7 @@ func (game *Game) CheckWinner(player int, col int, row int) bool {
 	return false
 }
 
+//JsonEncode turns Game struct into json
 func (game *Game) JsonEncode() []byte {
 	json, err := json.Marshal(game)
 	if err != nil {

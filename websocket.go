@@ -24,10 +24,13 @@ var upgrader = websocket.Upgrader{
 type connection struct {
 	// Channel when true triggers writer go routine to send out game state to all
 	doBroadcast chan bool
-	cp          *connectionPair
-	playerNum   int
+	//holds the connectionpair it belongs to
+	cp        *connectionPair
+	playerNum int
 }
 
+//holds two connections
+//think of connectionpair as a lobby for a game
 type connectionPair struct {
 	// the mutex to protect connections NOTE: could be implemented more extensively
 	connectionsMx sync.RWMutex
