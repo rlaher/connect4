@@ -96,6 +96,10 @@ func (game *Game) StringBoard() (string1, string2, string3, string4, string5, st
 
 //MakeMove checks if criteria is met and then updates Game
 func (game *Game) MakeMove(playerNum int, move int) {
+	if game.Heights == [7]int{6, 6, 6, 6, 6, 6, 6} {
+		game.Status = gameover
+		game.IsComplete = true
+	}
 	if game.isPlayersTurn(playerNum) {
 		if game.isValidMove(move) {
 
