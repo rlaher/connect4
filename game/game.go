@@ -25,7 +25,16 @@ type Game struct {
 	playersTurn int
 	NumPlayers  int
 
-	BoardAsString string `json:"boardasstring"`
+	BoardAsString1 string `json:"boardasstring1"`
+	BoardAsString2 string `json:"boardasstring2"`
+
+	BoardAsString3 string `json:"boardasstring3"`
+
+	BoardAsString4 string `json:"boardasstring4"`
+
+	BoardAsString5 string `json:"boardasstring5"`
+
+	BoardAsString6 string `json:"boardasstring6"`
 }
 
 type slot struct {
@@ -43,9 +52,9 @@ func NewGame() *Game {
 		IsStarted:     false,
 		IsComplete:    false,
 
-		NumPlayers:    0,
-		playersTurn:   0,
-		BoardAsString: "No board yet",
+		NumPlayers:     0,
+		playersTurn:    0,
+		BoardAsString1: "No board yet",
 	}
 	return &game
 }
@@ -64,21 +73,21 @@ func (game *Game) AddPlayer() {
 	}
 }
 
-func (game *Game) StringBoard() string {
-	var output string
+func (game *Game) StringBoard() (string1, string2, string3, string4, string5, string6 string) {
+	output := make([]string, 6)
 	for i := 0; i < BoardHeight; i++ {
 		for j := 0; j < BoardWidth; j++ {
-			output += ("| ")
+			output[i] += ("| ")
 			if game.GameBoard[i][j].Active == false {
-				output += (" ")
+				output[i] += ("__")
 			} else {
-				output += game.GameBoard[i][j].Symbol
+				output[i] += game.GameBoard[i][j].Symbol
 			}
-			output += (" |")
+			output[i] += (" |")
 		}
-		output += "\n"
+		//output += "\n"
 	}
-	return output
+	return output[0], output[1], output[2], output[3], output[4], output[5]
 
 }
 
@@ -98,7 +107,7 @@ func (game *Game) MakeMove(playerNum int, move int) {
 
 			game.switchPlayersTurn(playerNum)
 			game.NumMoves++
-			game.BoardAsString = game.StringBoard()
+			game.BoardAsString1, game.BoardAsString2, game.BoardAsString3, game.BoardAsString4, game.BoardAsString5, game.BoardAsString6 = game.StringBoard()
 
 		}
 	}

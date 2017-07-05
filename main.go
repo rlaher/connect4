@@ -7,6 +7,7 @@ import (
 
 func main() {
 	//preparing mux and server
+
 	router := http.NewServeMux()
 	router.Handle("/", http.FileServer(http.Dir("./c4-react/build/")))
 	router.HandleFunc("/ws", handler)

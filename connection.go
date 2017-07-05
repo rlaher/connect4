@@ -99,7 +99,6 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 		fmt.Println(field)
 
 		c.cp.game.MakeMove(c.playerNum, int(field))
-		fmt.Print(c.cp.game.StringBoard())
 		c.cp.receiveMove <- true //telling connectionPair to broadcast the gameState
 	}
 }
