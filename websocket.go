@@ -12,29 +12,27 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// connections stores all the hubs
+// connections is slice of all the pairs of players
 var connections []*connectionPair
 
+//upgrader necessary to turn our connection into a websocket
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
 type connection struct {
-	// Channel which triggers the connection to update the gameState
+	// Channel when true triggers writer go routine to send out game state to all
 	doBroadcast chan bool
-	// The connectionPair. Holds up to 2 connections.
-	cp *connectionPair
-	// playerNum represents the players Slot. Either 0 or 1
-	playerNum int
+	cp          *connectionPair
+	playerNum   int
 }
 
 type connectionPair struct {
-	// the mutex to protect connections
+	// the mutex to protect connections NOTE: could be implemented more extensively
 	connectionsMx sync.RWMutex
-	// Registered connections.
-	connections map[*connection]struct{}
-	// Inbound messages from the connections.
+	connections   map[*connection]struct{}
+	//channel when true means inbound move
 	receiveMove chan bool
 	logMx       sync.RWMutex
 	log         [][]byte
@@ -51,10 +49,14 @@ func newConnectionPair() *connectionPair {
 
 	go func() {
 		for {
+			//accept move
 			<-cp.receiveMove
 			for c := range cp.connections {
 				select {
+				//tell writer to broadcast game state
 				case c.doBroadcast <- true:
+					//if 5 seconds pass without signal, something wonky
+					//happened to connection so remove it
 				case <-time.After(5 * time.Second):
 					cp.removeConnection(c)
 				}
@@ -65,7 +67,7 @@ func newConnectionPair() *connectionPair {
 	return cp
 }
 
-// addConnection adds a players connection to the connectionPair
+// adds player to connection pair
 func (h *connectionPair) addConnection(conn *connection) {
 	h.connectionsMx.Lock()
 	defer h.connectionsMx.Unlock()
@@ -74,7 +76,7 @@ func (h *connectionPair) addConnection(conn *connection) {
 
 }
 
-// removeConnection removes a players connection from the connectionPair
+// removes connection from connectionpair and sets game status to broken
 func (h *connectionPair) removeConnection(conn *connection) {
 	h.connectionsMx.Lock()
 	defer h.connectionsMx.Unlock()
@@ -83,11 +85,11 @@ func (h *connectionPair) removeConnection(conn *connection) {
 		close(conn.doBroadcast)
 	}
 	log.Println("Player disconnected, connection pair removed")
-	//SHOULD DO SOMETHING HERE
+	//SHOULD DO MORE HERE
 	h.game.Status = game.Broken
 }
 
-// reader reads the moves from the clients ws-connection
+//reads move from websocket and makes move in Game
 func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 	defer wg.Done()
 	for {
@@ -100,16 +102,19 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 		fmt.Print("movemessage:")
 		fmt.Println(clientMoveMessage)
 
-		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32) //Getting FieldValue From Player Action
+		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32)
 		fmt.Print("conv to int:")
 		fmt.Println(field)
 
 		c.cp.game.MakeMove(c.playerNum, int(field))
-		c.cp.receiveMove <- true //telling connectionPair to broadcast the gameState
+		c.cp.receiveMove <- true
+		//tells connectionpair that move has occurred
+		//connectionpair then sends doBroadcast true
+		//which tells writer to broadcast the gamestate
 	}
 }
 
-// writer broadcasts the current gameState to the two players in a connectionPair
+// sends out gamestate when doBroadcast <- true
 func (c *connection) writer(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 	defer wg.Done()
 	for range c.doBroadcast {
@@ -117,27 +122,32 @@ func (c *connection) writer(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 	}
 }
 
-// getConnectionPairWithEmptySlot looks trough all connectionPairs and finds one which has only 1 player
-// if there is none a new connectionPair is created and the player is added to that pair
-func getConnectionPairWithEmptySlot() (*connectionPair, int) {
+//if empty connectionpair exists, matches players together to form full connection pair
+//otherwise, create new connectionpair which will wait for next player
+func matchMaker() (*connectionPair, int) {
 	sizeBefore := len(connections)
-	// find connections with 1 player first and pair if possible
+
 	for _, h := range connections {
 		if len(h.connections) == 1 {
 			log.Printf("Players paired")
-			return h, len(h.connections)
+			return h, 1
 		}
 	}
 
-	//TODO: I need to remove orphaned connectionPairs from the stack
-
-	// if no emtpy slow was found at all, we create a new connectionPair
+	// create new connectionpair
 	h := newConnectionPair()
+	//add it to connections[]
 	connections = append(connections, h)
 	log.Printf("Player seated in new connectionPair no. %v", len(connections))
 	return connections[sizeBefore], 0
 }
+
+//handler is called when user visits page
+//upgrades to websocket connection
+//puts player in a connection pair
+//calls reader and writer go routines
 func handler(w http.ResponseWriter, r *http.Request) {
+	//upgrade to websocket connection for real time updates
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -145,28 +155,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("connection upgraded!")
 	//Adding Connection to connectionPair
-	cp, pn := getConnectionPairWithEmptySlot()
+	cp, pn := matchMaker()
 	c := &connection{doBroadcast: make(chan bool), cp: cp, playerNum: pn}
 	c.cp.addConnection(c)
 
-	//If the connectionPair existed before but one player was disconnected
-	//we can now reinitialize the gameState after the remaining player has
-	// //been paired again
-	// if c.cp.game.Status == resetWaitPaired {
-	// 	c.cp.gs = newGameState()
-	// 	//there is already one player connected when we re-pair
-	// 	c.cp.gs.numberOfPlayers = 1
-	// 	log.Println("gamestate resetted")
-	// }
-
-	//inform the gameState about the new player
+	//add player to the game
 	c.cp.game.AddPlayer()
-	fmt.Print("printing game status:")
-	fmt.Println(c.cp.game.Status)
-	//telling connectionPair to broadcast the gameState
-	c.cp.receiveMove <- true
-	//creating the writer and reader goroutines
-	//the websocket connection is open as long as these goroutines are running
+
+	//i think this line is unnecessary
+	//uncomment if code breaks later on
+	//c.cp.receiveMove <- true
+
+	//waitgroup waits for reader and writer to both be closed before proceeding
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go c.writer(&wg, conn)
@@ -179,7 +179,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 // within a connectionPair
 func sendGameStateToConnection(wsConn *websocket.Conn, c *connection) {
 	err := wsConn.WriteMessage(websocket.TextMessage, c.cp.game.JsonEncode())
-	//removing connection if updating gameState fails
+	//removing connection if error
 	if err != nil {
 		fmt.Println(err.Error())
 		c.cp.removeConnection(c)

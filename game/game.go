@@ -11,30 +11,25 @@ const (
 )
 const Broken = "you broke it!"
 const waiting = "Waiting for 2nd player"
-const gamestarts = "Game is starting!"
+const gameprogress = "Game is in progress!"
 const gameover = "Game has finished!"
 
 type Game struct {
 	Status        string                        `json:"status"`
 	GameBoard     [BoardHeight][BoardWidth]slot `json:"gameboard"`
 	PlayerSymbols []string                      `json:"playersymbols"`
-
-	Heights     [BoardWidth]int
-	NumMoves    int
-	IsStarted   bool
-	IsComplete  bool
-	playersTurn int
-	NumPlayers  int
+	Heights       [BoardWidth]int
+	NumMoves      int
+	IsStarted     bool
+	IsComplete    bool
+	playersTurn   int
+	NumPlayers    int
 
 	BoardAsString1 string `json:"boardasstring1"`
 	BoardAsString2 string `json:"boardasstring2"`
-
 	BoardAsString3 string `json:"boardasstring3"`
-
 	BoardAsString4 string `json:"boardasstring4"`
-
 	BoardAsString5 string `json:"boardasstring5"`
-
 	BoardAsString6 string `json:"boardasstring6"`
 }
 
@@ -69,7 +64,7 @@ func (game *Game) AddPlayer() {
 	case 1:
 		game.Status = waiting
 	case 2:
-		game.Status = gamestarts
+		game.Status = gameprogress
 		game.IsStarted = true
 	}
 }
