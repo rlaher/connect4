@@ -49,7 +49,12 @@ func newConnectionPair() *connectionPair {
 	}
 
 	go func() {
-		<-cp.receiveMove
+		for {
+			<-cp.receiveMove
+			for c := range cp.connections {
+				c.doBroadcast <- true
+			}
+		}
 	}()
 
 	return cp
@@ -88,10 +93,13 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 		}
 		fmt.Print("movemessage:")
 		fmt.Println(clientMoveMessage)
-		fmt.Println("move message done")
 
 		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32) //Getting FieldValue From Player Action
+		fmt.Print("conv to int:")
+		fmt.Println(field)
+
 		c.cp.game.MakeMove(c.playerNum, int(field))
+		fmt.Print(c.cp.game.StringBoard())
 		c.cp.receiveMove <- true //telling connectionPair to broadcast the gameState
 	}
 }
@@ -168,6 +176,7 @@ func sendGameStateToConnection(wsConn *websocket.Conn, c *connection) {
 	err := wsConn.WriteMessage(websocket.TextMessage, c.cp.game.JsonEncode())
 	//removing connection if updating gameState fails
 	if err != nil {
+		fmt.Println(err.Error())
 		c.cp.removeConnection(c)
 	}
 }

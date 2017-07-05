@@ -24,6 +24,8 @@ type Game struct {
 	IsComplete  bool
 	playersTurn int
 	NumPlayers  int
+
+	BoardAsString string `json:"boardasstring"`
 }
 
 type slot struct {
@@ -33,7 +35,7 @@ type slot struct {
 
 func NewGame() *Game {
 	game := Game{
-		Status:        "blurgle",
+		Status:        "empty status",
 		GameBoard:     newGameBoard(),
 		PlayerSymbols: []string{0: "X", 1: "O"},
 		Heights:       [BoardWidth]int{},
@@ -41,8 +43,9 @@ func NewGame() *Game {
 		IsStarted:     false,
 		IsComplete:    false,
 
-		NumPlayers:  0,
-		playersTurn: 0,
+		NumPlayers:    0,
+		playersTurn:   0,
+		BoardAsString: "No board yet",
 	}
 	return &game
 }
@@ -95,6 +98,7 @@ func (game *Game) MakeMove(playerNum int, move int) {
 
 			game.switchPlayersTurn(playerNum)
 			game.NumMoves++
+			game.BoardAsString = game.StringBoard()
 
 		}
 	}
@@ -228,5 +232,6 @@ func (game *Game) JsonEncode() []byte {
 	if err != nil {
 		log.Fatal("Error in marshalling json:", err)
 	}
+
 	return json
 }
