@@ -3,34 +3,48 @@ import logo from './logo.svg';
 import './App.css';
 
 var socket = new WebSocket("ws://localhost:8080/ws");
-
+var gameComplete =false
 function clickHandler0(e){
+    if (!gameComplete){
     socket.send(0)
     console.log("0 sent")
 }
+}
 function clickHandler1(e){
+    if (!gameComplete){
     socket.send(1)
     console.log("1 sent")
 }
+}
 function clickHandler2(e){
+    if (!gameComplete){
     socket.send(2)
     console.log("2 sent")
 }
+}
 function clickHandler3(e){
+    if (!gameComplete){
     socket.send(3)
     console.log("3 sent")
 }
+}
 function clickHandler4(e){
+    if (!gameComplete){
     socket.send(4)
     console.log("4 sent")
 }
+}
 function clickHandler5(e){
+    if (!gameComplete){
     socket.send(5)
     console.log("5 sent")
 }
+}
 function clickHandler6(e){
+    if (!gameComplete){
     socket.send(6)
     console.log("6 sent")
+}
 }
 
 socket.onmessage = function(evt){
@@ -44,6 +58,11 @@ socket.onmessage = function(evt){
     document.getElementById("myboardstring6").innerHTML = newData.boardasstring6
 
     document.getElementById("status").innerHTML = newData.status
+
+    if (newData.status=="Game has finished!"){
+        gameComplete = true
+        window.alert("the game is over! refresh to play again")
+    }
 
 };
 
@@ -73,9 +92,7 @@ class App extends Component {
         <p id="myboardstring5">no board yet</p>
         <p id="myboardstring6">no board yet</p>
 
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+
       </div>
     );
   }
