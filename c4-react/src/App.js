@@ -4,6 +4,7 @@ import './App.css';
 
 var socket = new WebSocket("ws://localhost:8080/ws");
 var gameComplete =false
+
 function clickHandler0(e){
     if (!gameComplete){
     socket.send(0)
@@ -54,9 +55,10 @@ socket.onmessage = function(evt){
     var i
     for (i =1; i <=6; i++){
     document.getElementById("myboardstring"+i.toString()).innerHTML = boardstrings[i-1]
-
 }
     document.getElementById("status").innerHTML = newData.status
+
+    //var boardArray = newData.gameboard
 
     if (newData.status=="Game has finished!"){
         gameComplete = true
@@ -90,9 +92,9 @@ class App extends Component {
         <p id="myboardstring4">no board yet</p>
         <p id="myboardstring5">no board yet</p>
         <p id="myboardstring6">no board yet</p>
+        </div>
 
 
-      </div>
     );
   }
 }
