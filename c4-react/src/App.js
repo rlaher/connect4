@@ -50,13 +50,12 @@ function clickHandler6(e){
 socket.onmessage = function(evt){
     var newData = JSON.parse(evt.data);
     console.log(evt.data); //remove later
-    document.getElementById("myboardstring1").innerHTML = newData.boardasstring1
-    document.getElementById("myboardstring2").innerHTML = newData.boardasstring2
-    document.getElementById("myboardstring3").innerHTML = newData.boardasstring3
-    document.getElementById("myboardstring4").innerHTML = newData.boardasstring4
-    document.getElementById("myboardstring5").innerHTML = newData.boardasstring5
-    document.getElementById("myboardstring6").innerHTML = newData.boardasstring6
+    var boardstrings = [newData.boardasstring1,newData.boardasstring2,newData.boardasstring3,newData.boardasstring4,newData.boardasstring5,newData.boardasstring6]
+    var i
+    for (i =1; i <=6; i++){
+    document.getElementById("myboardstring"+i.toString()).innerHTML = boardstrings[i-1]
 
+}
     document.getElementById("status").innerHTML = newData.status
 
     if (newData.status=="Game has finished!"){
