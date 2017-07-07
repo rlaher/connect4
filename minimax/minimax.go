@@ -1,6 +1,10 @@
 package minimax
 
-import "connect4/game"
+import (
+	"connect4/game"
+	"fmt"
+	"math/rand"
+)
 
 //Lets assume computer is always player 2, playing as "O"
 
@@ -12,7 +16,7 @@ import "connect4/game"
 
 type GameNode struct {
 	Parent   *GameNode
-	Self     *game.Game
+	Self     game.Game
 	Children []*GameNode
 	Score    float32
 }
@@ -21,19 +25,59 @@ type GameNode struct {
 func (myGameNode *GameNode) PopulateChildren() {
 	avail := GetAvailableMoves(myGameNode.Self)
 	for a := range avail {
+
 		tempgame := myGameNode.Self
 		tempgame.MakeMove(myGameNode.Self.PlayersTurn, a)
+		//game.FastPrint(tempgame.BoardAsString1, tempgame.BoardAsString2, tempgame.BoardAsString3, tempgame.BoardAsString4, tempgame.BoardAsString5, tempgame.BoardAsString6)
 
 		var tempGameNode GameNode
 		tempGameNode.Parent = myGameNode
 		tempGameNode.Self = tempgame
-		tempGameNode.Score = float32(ScoreGame(tempgame)) //revisit this line
+		tempGameNode.Score = ScoreGame(&tempgame)
 		myGameNode.Children = append(myGameNode.Children, &tempGameNode)
 	}
-	//now populate all the Children nodes
-	for _, v := range myGameNode.Children {
-		v.PopulateChildren()
+}
+
+//SumNodes will evaluate all the children of one node
+//will assign them value based on their Children
+//the first child with the highest score will be returned
+//as the move to be played
+//kinda janky way to do this but lets see if it works
+func (myGameNode *GameNode) BestMove() int {
+	avail := GetAvailableMoves(myGameNode.Self)
+	sums := make([]float32, 10, 1000)
+	var sum float32
+	var que []*GameNode
+	// que = append(que, myGameNode.Children...)
+	for i, v := range myGameNode.Children {
+		que = append(que, v)
+		for len(que) > 0 {
+			current := que[0] //take first item out of q, put its children in q
+			que = que[1:]
+			que = append(que, current.Children...)
+			sum = sum + current.Score
+		}
+		sums[i] = sum
+		sum = 0
 	}
+	temp := float32(0)
+
+	var index int
+	var flag bool
+	//return the move that corresponds to highest sum
+
+	for i, v := range sums {
+		if v > temp {
+			flag = true
+			index = i
+			temp = v
+		}
+	}
+	if !flag { //no winning move in sight
+		n := rand.Int() % len(avail)
+		return avail[n]
+	}
+	return avail[index]
 }
 
 func (myGameNode *GameNode) CalcExpectedValue() float32 {
@@ -42,9 +86,14 @@ func (myGameNode *GameNode) CalcExpectedValue() float32 {
 
 	for i, _ := range avail {
 		if myGameNode.Children[i].Score == 0 {
+			fmt.Println("u make here")
 			myGameNode.Children[i].Score = myGameNode.Children[i].CalcExpectedValue()
+			fmt.Println("break here huh")
 		}
+		fmt.Println(i)
+		fmt.Println(myGameNode.Children[i].Score)
 		values[i] = myGameNode.Children[i].Score
+		fmt.Println("where is this beaking")
 	}
 	var output float32
 	for _, v := range values {
@@ -54,7 +103,7 @@ func (myGameNode *GameNode) CalcExpectedValue() float32 {
 	return output
 }
 
-func GetAvailableMoves(game *game.Game) []int {
+func GetAvailableMoves(game game.Game) []int {
 	var output []int
 	for i := 0; i <= 6; i++ {
 		if game.Heights[i] < 6 {
@@ -63,7 +112,8 @@ func GetAvailableMoves(game *game.Game) []int {
 	}
 	return output
 }
-func ScoreGame(game *game.Game) int {
+
+func ScoreGame(game *game.Game) float32 {
 	//no winner case
 	if !game.IsComplete {
 		return 0
@@ -77,20 +127,11 @@ func ScoreGame(game *game.Game) int {
 
 func (myGameNode *GameNode) Minimax() int {
 	myGameNode.PopulateChildren()
-	avail := GetAvailableMoves(myGameNode.Self)
-	var moveValues []float32
 
-	for i, v := range myGameNode.Children {
-		moveValues[i] = v.CalcExpectedValue()
+	//lets try getting 2 layers of moves
+	for _, v := range myGameNode.Children {
+		v.PopulateChildren()
 	}
-	var index int
-	var max float32
-	max = 0
-	for i, v := range moveValues {
-		if v >= max {
-			index = i
-		}
-	}
-	return avail[index]
 
+	return myGameNode.BestMove()
 }

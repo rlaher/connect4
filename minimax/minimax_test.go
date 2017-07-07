@@ -11,7 +11,7 @@ func TestGetAvailableMoves(t *testing.T) {
 	for _, v := range testcases {
 		myGame.Heights = v.heights
 		expected := v.availmoves
-		actual := GetAvailableMoves(myGame)
+		actual := GetAvailableMoves(*myGame)
 
 		equality := true
 

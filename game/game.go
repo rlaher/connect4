@@ -2,6 +2,7 @@ package game
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 )
 
@@ -93,6 +94,15 @@ func (game *Game) StringBoard() (string1, string2, string3, string4, string5, st
 	}
 	return output[0], output[1], output[2], output[3], output[4], output[5]
 
+}
+
+func FastPrint(string1, string2, string3, string4, string5, string6 string) {
+	fmt.Println(string1)
+	fmt.Println(string2)
+	fmt.Println(string3)
+	fmt.Println(string4)
+	fmt.Println(string5)
+	fmt.Println(string6)
 }
 
 //MakeMove checks if criteria is met and then updates Game

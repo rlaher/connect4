@@ -9,7 +9,7 @@ import (
 func main() {
 	mygame := game.NewGame()
 	var myGameNode minimax.GameNode
-	myGameNode.Self = mygame
+	myGameNode.Self = *mygame
 	var input int
 	for !myGameNode.Self.IsComplete {
 		fmt.Println("input:")
@@ -22,6 +22,12 @@ func main() {
 		fmt.Println(myGameNode.Self.BoardAsString5)
 		fmt.Println(myGameNode.Self.BoardAsString6)
 		myGameNode.Self.MakeMove(1, myGameNode.Minimax())
+		fmt.Println(myGameNode.Self.BoardAsString1)
+		fmt.Println(myGameNode.Self.BoardAsString2)
+		fmt.Println(myGameNode.Self.BoardAsString3)
+		fmt.Println(myGameNode.Self.BoardAsString4)
+		fmt.Println(myGameNode.Self.BoardAsString5)
+		fmt.Println(myGameNode.Self.BoardAsString6)
 	}
 
 	// router := http.NewServeMux()
