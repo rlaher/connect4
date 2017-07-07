@@ -112,7 +112,7 @@ func (game *Game) MakeMove(playerNum int, move int) {
 		game.IsComplete = true
 	}
 	if game.isPlayersTurn(playerNum) {
-		if game.isValidMove(move) {
+		if game.IsValidMove(move) {
 
 			height := game.Heights[move]
 
@@ -137,7 +137,7 @@ func (game *Game) isPlayersTurn(playerNum int) bool {
 	return playerNum == game.PlayersTurn
 }
 
-func (game *Game) isValidMove(move int) bool {
+func (game *Game) IsValidMove(move int) bool {
 	validmoves := []int{0, 1, 2, 3, 4, 5, 6}
 	if game.Heights[move] == BoardHeight {
 		return false
