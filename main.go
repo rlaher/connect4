@@ -8,8 +8,22 @@ import (
 
 func main() {
 	mygame := game.NewGame()
-	a := minimax.GetAvailableMoves(mygame)
-	fmt.Print(a)
+	var myGameNode minimax.GameNode
+	myGameNode.Self = mygame
+	var input int
+	for !myGameNode.Self.IsComplete {
+		fmt.Println("input:")
+		fmt.Scanln(&input)
+		myGameNode.Self.MakeMove(0, input)
+		fmt.Println(myGameNode.Self.BoardAsString1)
+		fmt.Println(myGameNode.Self.BoardAsString2)
+		fmt.Println(myGameNode.Self.BoardAsString3)
+		fmt.Println(myGameNode.Self.BoardAsString4)
+		fmt.Println(myGameNode.Self.BoardAsString5)
+		fmt.Println(myGameNode.Self.BoardAsString6)
+		myGameNode.Self.MakeMove(1, myGameNode.Minimax())
+	}
+
 	// router := http.NewServeMux()
 	// router.Handle("/", http.FileServer(http.Dir("./c4-react/build/")))
 	// router.HandleFunc("/ws", handler)

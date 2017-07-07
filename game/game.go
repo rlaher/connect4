@@ -25,8 +25,9 @@ type Game struct {
 	NumMoves      int
 	IsStarted     bool
 	IsComplete    bool
-	playersTurn   int
+	PlayersTurn   int
 	NumPlayers    int
+	LastMove      [2]int //row, col
 
 	BoardAsString1 string `json:"boardasstring1"`
 	BoardAsString2 string `json:"boardasstring2"`
@@ -54,7 +55,7 @@ func NewGame() *Game {
 		IsComplete:    false,
 
 		NumPlayers:     0,
-		playersTurn:    0,
+		PlayersTurn:    0,
 		BoardAsString1: "No board yet",
 	}
 	return &game
@@ -112,6 +113,7 @@ func (game *Game) MakeMove(playerNum int, move int) {
 				game.IsComplete = true
 			}
 			game.Heights[move]++
+			game.LastMove = [2]int{game.Heights[move], move}
 
 			game.switchPlayersTurn(playerNum)
 			game.NumMoves++
@@ -122,7 +124,7 @@ func (game *Game) MakeMove(playerNum int, move int) {
 }
 
 func (game *Game) isPlayersTurn(playerNum int) bool {
-	return playerNum == game.playersTurn
+	return playerNum == game.PlayersTurn
 }
 
 func (game *Game) isValidMove(move int) bool {
@@ -141,9 +143,9 @@ func (game *Game) isValidMove(move int) bool {
 func (game *Game) switchPlayersTurn(playerNum int) {
 	switch playerNum {
 	case 0:
-		game.playersTurn = 1
+		game.PlayersTurn = 1
 	case 1:
-		game.playersTurn = 0
+		game.PlayersTurn = 0
 	}
 }
 
