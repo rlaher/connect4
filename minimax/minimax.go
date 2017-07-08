@@ -15,7 +15,7 @@ func BestMove(depth int, mygame game.Game, playerNum int) int {
 		if mygame.IsValidMove(move) {
 			temp := mygame
 			temp.MakeMove(playerNum, move)
-			potentialMoves[move] = search(depth-1, temp, int(otherplayer)) //returns value of other players optimal move
+			potentialMoves[move] = -search(depth-1, temp, int(otherplayer)) //returns value of other players optimal move
 		}
 	}
 	alpha := -999999
@@ -32,14 +32,61 @@ func BestMove(depth int, mygame game.Game, playerNum int) int {
 
 //goes through tree and assigns values to nodes up to depth argument
 func search(depth int, mygame game.Game, playerNum int) int {
-	return 0
+	potentialMoves := make([]game.Game, 10) //maps column # of move to the "score"
+	otherplayer := int(math.Abs(float64(1 - playerNum)))
+
+	for move := 0; move < 7; move++ {
+		if mygame.IsValidMove(move) {
+			temp := mygame
+			temp.MakeMove(playerNum, move)
+			potentialMoves = append(potentialMoves, temp)
+		}
+	}
+	if depth == 0 || len(potentialMoves) == 0 || mygame.IsComplete {
+		return stateValuation(mygame, playerNum)
+	}
+	output := -9999999
+	for _, v := range potentialMoves {
+		output = Max(output, -search(depth-1, v, otherplayer))
+	}
+	return output
+}
+func Max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
 }
 
 //stateValuation is assigns values to non end game board states
 //this way we can minimax without recursing through every possible game state
-
+//haven't studied the optimal weightings but lets make diagnols worth more
+//because they're trickier
 func stateValuation(mygame game.Game, playerNum int) int {
-	return 0
+	otherplayer := int(math.Abs(float64(1 - playerNum)))
+	//if other player can win, block it
+	if countHoriz(mygame, otherplayer, 4)+countVert(mygame, otherplayer, 4)+countDiag(mygame, otherplayer, 4) > 0 {
+		return -1000000
+	}
+
+	horizweight2 := 2
+	vertweight2 := 2
+	diagweight2 := 4
+	horizweight3 := 8
+	vertweight3 := 8
+	diagweight3 := 16
+	weight4 := 10000
+
+	value := 0
+	value += horizweight2 * countHoriz(mygame, playerNum, 2)
+	value += vertweight2 * countVert(mygame, playerNum, 2)
+	value += diagweight2 + countDiag(mygame, playerNum, 2)
+	value += horizweight3 + countHoriz(mygame, playerNum, 3)
+	value += vertweight3 + countHoriz(mygame, playerNum, 3)
+	value += diagweight3 + countDiag(mygame, playerNum, 3)
+	value += weight4 + (countHoriz(mygame, playerNum, 4)*countVert(mygame, playerNum, 4) + countDiag(mygame, playerNum, 4))
+	return value
+
 }
 
 //countConsecutive returns how many streaks of streakLength exist
