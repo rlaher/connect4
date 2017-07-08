@@ -42,6 +42,7 @@ func search(depth int, mygame game.Game, playerNum int) int {
 			potentialMoves = append(potentialMoves, temp)
 		}
 	}
+	fmt.Println("do we make it here")
 	if depth == 0 || len(potentialMoves) == 0 || mygame.IsComplete {
 		return stateValuation(mygame, playerNum)
 	}
@@ -80,11 +81,11 @@ func stateValuation(mygame game.Game, playerNum int) int {
 	value := 0
 	value += horizweight2 * countHoriz(mygame, playerNum, 2)
 	value += vertweight2 * countVert(mygame, playerNum, 2)
-	value += diagweight2 + countDiag(mygame, playerNum, 2)
-	value += horizweight3 + countHoriz(mygame, playerNum, 3)
-	value += vertweight3 + countHoriz(mygame, playerNum, 3)
-	value += diagweight3 + countDiag(mygame, playerNum, 3)
-	value += weight4 + (countHoriz(mygame, playerNum, 4)*countVert(mygame, playerNum, 4) + countDiag(mygame, playerNum, 4))
+	value += diagweight2 * countDiag(mygame, playerNum, 2)
+	value += horizweight3 * countHoriz(mygame, playerNum, 3)
+	value += vertweight3 * countHoriz(mygame, playerNum, 3)
+	value += diagweight3 * countDiag(mygame, playerNum, 3)
+	value += weight4 * (countHoriz(mygame, playerNum, 4)*countVert(mygame, playerNum, 4) + countDiag(mygame, playerNum, 4))
 	return value
 
 }
