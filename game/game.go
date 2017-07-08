@@ -20,7 +20,7 @@ const gameover = "Game has finished!"
 //Game holds all the game data
 type Game struct {
 	Status        string                        `json:"status"`
-	GameBoard     [BoardHeight][BoardWidth]slot `json:"gameboard"`
+	GameBoard     [BoardHeight][BoardWidth]Slot `json:"gameboard"`
 	PlayerSymbols []string                      `json:"playersymbols"`
 	Heights       [BoardWidth]int
 	NumMoves      int
@@ -38,8 +38,8 @@ type Game struct {
 	BoardAsString6 string `json:"boardasstring6"`
 }
 
-//struct for each slot on the board
-type slot struct {
+//struct for each Slot on the board
+type Slot struct {
 	Active bool   `json:"active"`
 	Symbol string `json:"symbol"`
 }
@@ -61,8 +61,8 @@ func NewGame() *Game {
 	}
 	return &game
 }
-func newGameBoard() [BoardHeight][BoardWidth]slot {
-	return [BoardHeight][BoardWidth]slot{}
+func newGameBoard() [BoardHeight][BoardWidth]Slot {
+	return [BoardHeight][BoardWidth]Slot{}
 }
 
 //AddPlayer adds a new player to the game

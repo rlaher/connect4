@@ -15,9 +15,8 @@ func BestMove(depth int, mygame game.Game, playerNum int) int {
 		if mygame.IsValidMove(move) {
 			temp := mygame
 			temp.MakeMove(playerNum, move)
-			potentialMoves[move] = -search(depth-1, temp, int(otherplayer))
+			potentialMoves[move] = search(depth-1, temp, int(otherplayer)) //returns value of other players optimal move
 		}
-
 	}
 	alpha := -999999
 	var output int
@@ -27,14 +26,181 @@ func BestMove(depth int, mygame game.Game, playerNum int) int {
 			output = key
 		}
 	}
-	fmt.Sprint("The associated alpha value is%d", alpha)
+	fmt.Printf("The associated alpha value is %d", alpha)
 	return output
-
 }
 
 //goes through tree and assigns values to nodes up to depth argument
 func search(depth int, mygame game.Game, playerNum int) int {
 	return 0
+}
+
+//stateValuation is assigns values to non end game board states
+//this way we can minimax without recursing through every possible game state
+
+func stateValuation(mygame game.Game, playerNum int) int {
+	return 0
+}
+
+//countConsecutive returns how many streaks of streakLength exist
+func countConsecutive(mygame game.Game, playerNum int, streakLength int) int {
+	return 0
+}
+
+//countHoriz counts horiz streaks of streakLength
+//only counts to the right to avoid double counting
+//doesn't count streak of 3 as a streak of 2
+func countHoriz(mygame game.Game, playerNum int, streakLength int) int {
+	count := 0     //overall # of streaks of n length
+	currCount := 0 //this needs to be exactly n so that we don't count streaks of 2 as streaks of 3
+	symbol := mygame.PlayerSymbols[mygame.PlayersTurn]
+	//increment over every square
+	for i := 0; i < game.BoardHeight; i++ { //rows
+		for j := 0; j < game.BoardWidth; j++ { //columns
+			if mygame.GameBoard[i][j].Active {
+				//check that the symbol matches
+				if mygame.GameBoard[i][j].Symbol == symbol {
+					//make sure piece to left isn't the same symbol
+					//so that we're not double counting
+					if j == 0 || mygame.GameBoard[i][j-1].Symbol != symbol {
+						currCount++
+						for k := 1; k < 4; k++ {
+							if j+k < game.BoardWidth { //make sure we don't go off board
+								if mygame.GameBoard[i][j+k].Symbol == symbol {
+									currCount++
+								} else {
+									break //break if different symbol
+								}
+							}
+						}
+						//only increment count if currentcount matches n
+						if currCount == streakLength {
+							count++
+							currCount = 0
+						}
+						currCount = 0 //reset currCount
+					}
+
+				}
+
+			}
+		}
+	}
+	return count
+}
+
+//countVert will count downwards
+func countVert(mygame game.Game, playerNum int, streakLength int) int {
+	count := 0     //overall # of streaks of n length
+	currCount := 0 //this needs to be exactly n so that we don't count streaks of 2 as streaks of 3
+	symbol := mygame.PlayerSymbols[mygame.PlayersTurn]
+	//increment over every square
+	for i := 0; i < game.BoardHeight; i++ { //rows
+		for j := 0; j < game.BoardWidth; j++ { //columns
+			if mygame.GameBoard[i][j].Active {
+				//check that the symbol matches
+				if mygame.GameBoard[i][j].Symbol == symbol {
+					//make sure piece above isn't the same symbol
+					//so that we're not double counting
+					if i == 0 || mygame.GameBoard[i-1][j].Symbol != symbol {
+						currCount++
+						for k := 1; k < 4; k++ {
+							if i+k < game.BoardHeight { //make sure we don't go off board
+								if mygame.GameBoard[i+k][j].Symbol == symbol {
+									currCount++
+								} else {
+									break //break if different symbol
+								}
+							}
+						}
+						//only increment count if currentcount matches n
+						if currCount == streakLength {
+							count++
+							currCount = 0
+						}
+						currCount = 0 //reset currCount
+					}
+
+				}
+
+			}
+		}
+	}
+	return count
+}
+
+//countDiag will count downwards both to the right and the left
+func countDiag(mygame game.Game, playerNum int, streakLength int) int {
+	count := 0     //overall # of streaks of n length
+	currCount := 0 //this needs to be exactly n so that we don't count streaks of 2 as streaks of 3
+	symbol := mygame.PlayerSymbols[mygame.PlayersTurn]
+	//downwards to the right first
+	//increment over every square
+	for i := 0; i < game.BoardHeight; i++ { //rows
+		for j := 0; j < game.BoardWidth; j++ { //columns
+			if mygame.GameBoard[i][j].Active {
+				//check that the symbol matches
+				if mygame.GameBoard[i][j].Symbol == symbol {
+					//make sure piece up and left to it isn't the same symbol
+					//so that we're not double counting
+					if i == 0 || j == 0 || mygame.GameBoard[i-1][j-1].Symbol != symbol {
+						currCount++
+						for k := 1; k < 4; k++ {
+							if i+k < game.BoardHeight && j+k < game.BoardWidth { //make sure we don't go off board
+								if mygame.GameBoard[i+k][j+k].Symbol == symbol {
+									currCount++
+								} else {
+									break //break if different symbol
+								}
+							}
+						}
+						//only increment count if currentcount matches n
+						if currCount == streakLength {
+							count++
+							currCount = 0
+						}
+						currCount = 0 //reset currCount
+					}
+
+				}
+
+			}
+		}
+	}
+	//now downwards to the left
+	for i := 0; i < game.BoardHeight; i++ { //rows
+		for j := 0; j < game.BoardWidth; j++ { //columns
+			if mygame.GameBoard[i][j].Active {
+				//check that the symbol matches
+				if mygame.GameBoard[i][j].Symbol == symbol {
+					//make sure piece up and left to it isn't the same symbol
+					//so that we're not double counting
+					if i == 0 || j == game.BoardWidth-1 || mygame.GameBoard[i-1][j+1].Symbol != symbol {
+						currCount++
+						for k := 1; k < 4; k++ {
+							if i+k < game.BoardHeight && j-k >= 0 { //make sure we don't go off board
+								if mygame.GameBoard[i+k][j-k].Symbol == symbol {
+									currCount++
+								} else {
+									break //break if different symbol
+								}
+							}
+						}
+						//only increment count if currentcount matches n
+						if currCount == streakLength {
+							count++
+							currCount = 0
+						}
+						currCount = 0 //reset currCount
+					}
+
+				}
+
+			}
+		}
+	}
+
+	return count
 }
 
 //Lets assume computer is always player 2, playing as "O"

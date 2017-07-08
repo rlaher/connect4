@@ -1,14 +1,14 @@
 package game
 
 var testcases = []struct {
-	mygame        [BoardHeight][BoardWidth]slot
+	mygame        [BoardHeight][BoardWidth]Slot
 	playersymbols []string
 	result        bool
 	pos           []int
 	player        int
 }{
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "O"}},
 		},
 		[]string{0: "X", 1: "O"},
@@ -18,7 +18,7 @@ var testcases = []struct {
 	},
 
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
@@ -34,7 +34,7 @@ var testcases = []struct {
 		1,
 	},
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "O"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
@@ -48,7 +48,7 @@ var testcases = []struct {
 		1,
 	},
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "O"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
@@ -62,7 +62,7 @@ var testcases = []struct {
 		0,
 	},
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "O"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
@@ -76,7 +76,7 @@ var testcases = []struct {
 		1,
 	},
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
@@ -90,7 +90,7 @@ var testcases = []struct {
 		1,
 	},
 	{
-		[BoardHeight][BoardWidth]slot{
+		[BoardHeight][BoardWidth]Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
