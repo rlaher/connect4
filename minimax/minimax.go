@@ -9,13 +9,13 @@ import (
 //depth is difficulty/how long it takes. higher = more difficult
 func BestMove(depth int, mygame game.Game, playerNum int) int {
 	potentialMoves := make(map[int]int) //maps column # of move to the "score"
-	otherplayer := math.Abs(float64(1 - playerNum))
+	otherplayer := int(math.Abs(float64(1 - playerNum)))
 
 	for move := 0; move < 7; move++ {
 		if mygame.IsValidMove(move) {
 			temp := mygame
 			temp.MakeMove(playerNum, move)
-			potentialMoves[move] = -search(depth-1, temp, int(otherplayer)) //returns value of other players optimal move
+			potentialMoves[move] = -search(depth-1, temp, otherplayer) //returns value of other players optimal move
 		}
 	}
 	alpha := -999999
@@ -27,11 +27,15 @@ func BestMove(depth int, mygame game.Game, playerNum int) int {
 		}
 	}
 	fmt.Printf("The associated alpha value is %d", alpha)
+	fmt.Println()
+	fmt.Print("output:")
+	fmt.Println(output)
 	return output
 }
 
 //goes through tree and assigns values to nodes up to depth argument
 func search(depth int, mygame game.Game, playerNum int) int {
+
 	var potentialMoves []game.Game //maps column # of move to the "score"
 	otherplayer := int(math.Abs(float64(1 - playerNum)))
 	for move := 0; move < 7; move++ {
@@ -42,17 +46,14 @@ func search(depth int, mygame game.Game, playerNum int) int {
 		}
 	}
 	if depth == 0 || len(potentialMoves) == 0 || mygame.IsComplete {
+
 		return stateValuation(mygame, playerNum)
 	}
-	fmt.Print("statevaluation:")
-	fmt.Println(stateValuation(mygame, playerNum))
 	output := -9999999
 	for _, v := range potentialMoves {
-
-		//bla := search(depth-1, v, otherplayer)
-
 		output = Max(output, -search(depth-1, v, otherplayer))
 	}
+
 	return output
 }
 func Max(x, y int) int {
@@ -79,16 +80,18 @@ func stateValuation(mygame game.Game, playerNum int) int {
 	horizweight3 := 8
 	vertweight3 := 8
 	diagweight3 := 16
-	weight4 := 10000
+	weight4 := 1000000
 
 	value := 0
 	value += horizweight2 * countHoriz(mygame, playerNum, 2)
 	value += vertweight2 * countVert(mygame, playerNum, 2)
 	value += diagweight2 * countDiag(mygame, playerNum, 2)
 	value += horizweight3 * countHoriz(mygame, playerNum, 3)
-	value += vertweight3 * countHoriz(mygame, playerNum, 3)
+	value += vertweight3 * countVert(mygame, playerNum, 3)
 	value += diagweight3 * countDiag(mygame, playerNum, 3)
-	value += weight4 * (countHoriz(mygame, playerNum, 4)*countVert(mygame, playerNum, 4) + countDiag(mygame, playerNum, 4))
+	value += weight4 * countHoriz(mygame, playerNum, 4)
+	value += weight4 * countVert(mygame, playerNum, 4)
+	value += weight4 * countDiag(mygame, playerNum, 4)
 	return value
 
 }
@@ -104,7 +107,7 @@ func countConsecutive(mygame game.Game, playerNum int, streakLength int) int {
 func countHoriz(mygame game.Game, playerNum int, streakLength int) int {
 	count := 0     //overall # of streaks of n length
 	currCount := 0 //this needs to be exactly n so that we don't count streaks of 2 as streaks of 3
-	symbol := mygame.PlayerSymbols[mygame.PlayersTurn]
+	symbol := mygame.PlayerSymbols[playerNum]
 	//increment over every square
 	for i := 0; i < game.BoardHeight; i++ { //rows
 		for j := 0; j < game.BoardWidth; j++ { //columns
@@ -142,12 +145,15 @@ func countHoriz(mygame game.Game, playerNum int, streakLength int) int {
 
 //countVert will count downwards
 func countVert(mygame game.Game, playerNum int, streakLength int) int {
+
 	count := 0     //overall # of streaks of n length
 	currCount := 0 //this needs to be exactly n so that we don't count streaks of 2 as streaks of 3
-	symbol := mygame.PlayerSymbols[mygame.PlayersTurn]
+	symbol := mygame.PlayerSymbols[playerNum]
+
 	//increment over every square
 	for i := 0; i < game.BoardHeight; i++ { //rows
 		for j := 0; j < game.BoardWidth; j++ { //columns
+
 			if mygame.GameBoard[i][j].Active {
 				//check that the symbol matches
 				if mygame.GameBoard[i][j].Symbol == symbol {
@@ -165,6 +171,7 @@ func countVert(mygame game.Game, playerNum int, streakLength int) int {
 							}
 						}
 						//only increment count if currentcount matches n
+
 						if currCount == streakLength {
 							count++
 							currCount = 0
@@ -177,6 +184,7 @@ func countVert(mygame game.Game, playerNum int, streakLength int) int {
 			}
 		}
 	}
+
 	return count
 }
 
@@ -184,7 +192,7 @@ func countVert(mygame game.Game, playerNum int, streakLength int) int {
 func countDiag(mygame game.Game, playerNum int, streakLength int) int {
 	count := 0     //overall # of streaks of n length
 	currCount := 0 //this needs to be exactly n so that we don't count streaks of 2 as streaks of 3
-	symbol := mygame.PlayerSymbols[mygame.PlayersTurn]
+	symbol := mygame.PlayerSymbols[playerNum]
 	//downwards to the right first
 	//increment over every square
 	for i := 0; i < game.BoardHeight; i++ { //rows

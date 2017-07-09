@@ -31,15 +31,15 @@ var testcasesStreaks = []struct {
 		[game.BoardHeight][game.BoardWidth]game.Slot{
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
 			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
-			{{true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
-			{{true, "O"}, {true, "X"}, {true, "X"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}},
+			{{true, "X"}, {true, "O"}, {true, "O"}, {true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}},
+			{{true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}},
 			{{true, "X"}, {true, "O"}, {true, "X"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}},
 			{{true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}},
 		},
 		0,
-		[]int{0, 0, 1, 4, 0}, //offset by two for indexing ease
-		[]int{0, 0, 1, 5, 0},
-		[]int{0, 0, 8, 0, 2},
+		[]int{0, 0, 0, 5, 0}, //offset by two for indexing ease
+		[]int{0, 0, 0, 5, 1},
+		[]int{0, 0, 7, 1, 2},
 	},
 }
 
@@ -47,17 +47,19 @@ var testcasesSearch = []struct {
 	mygame    [game.BoardHeight][game.BoardWidth]game.Slot
 	depth     int
 	playerNum int
+	heights   [7]int
 }{
 	{
 		[game.BoardHeight][game.BoardWidth]game.Slot{
 			{{false, ""}, {false, ""}, {false, ""}, {false, "X"}, {false, "X"}, {false, "X"}, {false, "O"}},
 			{{false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}, {false, "X"}, {false, "X"}, {false, "O"}},
 			{{false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}, {false, "X"}, {false, "X"}, {false, "O"}},
-			{{false, "O"}, {false, "X"}, {false, "X"}, {false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}},
-			{{false, "X"}, {false, "O"}, {false, "X"}, {false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}},
+			{{true, "X"}, {false, "X"}, {false, "X"}, {false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}},
+			{{true, "X"}, {false, "O"}, {false, "X"}, {false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}},
 			{{true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}},
 		},
 		3,
-		1,
+		0,
+		[7]int{3, 1, 1, 1, 1, 1, 1},
 	},
 }
