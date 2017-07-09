@@ -20,7 +20,7 @@ func main() {
 		fmt.Println(mygame.BoardAsString4)
 		fmt.Println(mygame.BoardAsString5)
 		fmt.Println(mygame.BoardAsString6)
-		mygame.MakeMove(1, minimax.BestMove(3, *mygame, 1))
+		mygame.MakeMove(1, minimax.Minimax(3, *mygame, 1))
 		fmt.Println(mygame.BoardAsString1)
 		fmt.Println(mygame.BoardAsString2)
 		fmt.Println(mygame.BoardAsString3)
@@ -28,7 +28,7 @@ func main() {
 		fmt.Println(mygame.BoardAsString5)
 		fmt.Println(mygame.BoardAsString6)
 	}
-
+	fmt.Println("game over!")
 	// router := http.NewServeMux()
 	// router.Handle("/", http.FileServer(http.Dir("./c4-react/build/")))
 	// router.HandleFunc("/ws", handler)
