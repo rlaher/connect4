@@ -96,6 +96,7 @@ func (game *Game) StringBoard() (string1, string2, string3, string4, string5, st
 
 }
 
+//FastPrint was used for debugging to see the board quickly
 func FastPrint(string1, string2, string3, string4, string5, string6 string) {
 	fmt.Println(string1)
 	fmt.Println(string2)

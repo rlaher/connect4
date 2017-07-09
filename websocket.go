@@ -13,7 +13,7 @@ import (
 )
 
 // connections is slice of all the pairs of players
-var connections []*connectionPair
+var connections []*gameRoom
 
 //upgrader necessary to turn our connection into a websocket
 var upgrader = websocket.Upgrader{
@@ -24,26 +24,24 @@ var upgrader = websocket.Upgrader{
 type connection struct {
 	// Channel when true triggers writer go routine to send out game state to all
 	doBroadcast chan bool
-	//holds the connectionpair it belongs to
-	cp        *connectionPair
+	//holds the gameRoom it belongs to
+	gr        *gameRoom
 	playerNum int
 }
 
 //holds two connections
-//think of connectionpair as a lobby for a game
-type connectionPair struct {
-	// the mutex to protect connections NOTE: could be implemented more extensively
-	connectionsMx sync.RWMutex
+//think of gameRoom as a lobby for a game
+type gameRoom struct {
+	connectionsMx sync.RWMutex // the mutex to protect connections NOTE: could be implemented more extensively
 	connections   map[*connection]struct{}
-	//channel when true means inbound move
-	receiveMove chan bool
-	logMx       sync.RWMutex
-	log         [][]byte
-	game        *game.Game
+	receiveMove   chan bool //channel when true means inbound move
+	logMx         sync.RWMutex
+	log           [][]byte
+	game          *game.Game
 }
 
-func newConnectionPair() *connectionPair {
-	cp := &connectionPair{
+func newgameRoom() *gameRoom {
+	gr := &gameRoom{
 		connectionsMx: sync.RWMutex{},
 		receiveMove:   make(chan bool),
 		connections:   make(map[*connection]struct{}),
@@ -53,25 +51,25 @@ func newConnectionPair() *connectionPair {
 	go func() {
 		for {
 			//accept move
-			<-cp.receiveMove
-			for c := range cp.connections {
+			<-gr.receiveMove
+			for c := range gr.connections {
 				select {
 				//tell writer to broadcast game state
 				case c.doBroadcast <- true:
 					//if 5 seconds pass without signal, something wonky
 					//happened to connection so remove it
 				case <-time.After(5 * time.Second):
-					cp.removeConnection(c)
+					gr.removeConnection(c)
 				}
 			}
 		}
 	}()
 
-	return cp
+	return gr
 }
 
 // adds player to connection pair
-func (h *connectionPair) addConnection(conn *connection) {
+func (h *gameRoom) addConnection(conn *connection) {
 	h.connectionsMx.Lock()
 	defer h.connectionsMx.Unlock()
 
@@ -79,15 +77,15 @@ func (h *connectionPair) addConnection(conn *connection) {
 
 }
 
-// removes connection from connectionpair and sets game status to broken
-func (h *connectionPair) removeConnection(conn *connection) {
+// removes connection from gameRoom and sets game status to broken
+func (h *gameRoom) removeConnection(conn *connection) {
 	h.connectionsMx.Lock()
 	defer h.connectionsMx.Unlock()
 	if _, ok := h.connections[conn]; ok {
 		delete(h.connections, conn)
 		close(conn.doBroadcast)
 	}
-	log.Println("Player disconnected, connection pair removed")
+	log.Println("Player disconnected, gameroom shut down")
 	//SHOULD DO MORE HERE
 	h.game.Status = game.Broken
 }
@@ -109,10 +107,10 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 		fmt.Print("conv to int:")
 		fmt.Println(field)
 
-		c.cp.game.MakeMove(c.playerNum, int(field))
-		c.cp.receiveMove <- true
-		//tells connectionpair that move has occurred
-		//connectionpair then sends doBroadcast true
+		c.gr.game.MakeMove(c.playerNum, int(field))
+		c.gr.receiveMove <- true
+		//tells gameRoom that move has occurred
+		//gameRoom then sends doBroadcast true
 		//which tells writer to broadcast the gamestate
 	}
 }
@@ -125,9 +123,9 @@ func (c *connection) writer(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 	}
 }
 
-//if empty connectionpair exists, matches players together to form full connection pair
-//otherwise, create new connectionpair which will wait for next player
-func matchMaker() (*connectionPair, int) {
+//if empty gameRoom exists, matches players together to form full room
+//otherwise, create new gameRoom which will wait for next player
+func matchMaker() (*gameRoom, int) {
 	sizeBefore := len(connections)
 
 	for _, h := range connections {
@@ -137,11 +135,11 @@ func matchMaker() (*connectionPair, int) {
 		}
 	}
 
-	// create new connectionpair
-	h := newConnectionPair()
+	// create new gameRoom
+	h := newgameRoom()
 	//add it to connections[]
 	connections = append(connections, h)
-	log.Printf("Player seated in new connectionPair no. %v", len(connections))
+	log.Printf("Player seated in new gameRoom no. %v", len(connections))
 	return connections[sizeBefore], 0
 }
 
@@ -157,17 +155,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("connection upgraded!")
-	//Adding Connection to connectionPair
-	cp, pn := matchMaker()
-	c := &connection{doBroadcast: make(chan bool), cp: cp, playerNum: pn}
-	c.cp.addConnection(c)
+	//Adding Connection to gameRoom
+	gr, pn := matchMaker()
+	c := &connection{doBroadcast: make(chan bool), gr: gr, playerNum: pn}
+	c.gr.addConnection(c)
 
 	//add player to the game
-	c.cp.game.AddPlayer()
+	c.gr.game.AddPlayer()
 
 	//i think this line is unnecessary
 	//uncomment if code breaks later on
-	//c.cp.receiveMove <- true
+	//c.gr.receiveMove <- true
 
 	//waitgroup waits for reader and writer to both be closed before proceeding
 	var wg sync.WaitGroup
@@ -179,12 +177,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 // sendGameStateToConnection broadcasts the current gameState as JSON to all players
-// within a connectionPair
+// within a gameRoom
 func sendGameStateToConnection(wsConn *websocket.Conn, c *connection) {
-	err := wsConn.WriteMessage(websocket.TextMessage, c.cp.game.JsonEncode())
+	err := wsConn.WriteMessage(websocket.TextMessage, c.gr.game.JsonEncode())
 	//removing connection if error
 	if err != nil {
 		fmt.Println(err.Error())
-		c.cp.removeConnection(c)
+		c.gr.removeConnection(c)
 	}
 }

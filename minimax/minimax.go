@@ -108,11 +108,6 @@ func stateValuation(mygame game.Game, playerNum int) int {
 
 }
 
-//countConsecutive returns how many streaks of streakLength exist
-func countConsecutive(mygame game.Game, playerNum int, streakLength int) int {
-	return 0
-}
-
 //countHoriz counts horiz streaks of streakLength
 //only counts to the right to avoid double counting
 //doesn't count streak of 3 as a streak of 2
