@@ -42,3 +42,22 @@ var testcasesStreaks = []struct {
 		[]int{0, 0, 8, 0, 2},
 	},
 }
+
+var testcasesSearch = []struct {
+	mygame    [game.BoardHeight][game.BoardWidth]game.Slot
+	depth     int
+	playerNum int
+}{
+	{
+		[game.BoardHeight][game.BoardWidth]game.Slot{
+			{{false, ""}, {false, ""}, {false, ""}, {false, "X"}, {false, "X"}, {false, "X"}, {false, "O"}},
+			{{false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}, {false, "X"}, {false, "X"}, {false, "O"}},
+			{{false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}, {false, "X"}, {false, "X"}, {false, "O"}},
+			{{false, "O"}, {false, "X"}, {false, "X"}, {false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}},
+			{{false, "X"}, {false, "O"}, {false, "X"}, {false, "O"}, {false, "O"}, {false, "O"}, {false, "X"}},
+			{{true, "X"}, {true, "X"}, {true, "X"}, {true, "O"}, {true, "O"}, {true, "O"}, {true, "X"}},
+		},
+		3,
+		1,
+	},
+}

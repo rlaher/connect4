@@ -32,9 +32,8 @@ func BestMove(depth int, mygame game.Game, playerNum int) int {
 
 //goes through tree and assigns values to nodes up to depth argument
 func search(depth int, mygame game.Game, playerNum int) int {
-	potentialMoves := make([]game.Game, 10) //maps column # of move to the "score"
+	var potentialMoves []game.Game //maps column # of move to the "score"
 	otherplayer := int(math.Abs(float64(1 - playerNum)))
-
 	for move := 0; move < 7; move++ {
 		if mygame.IsValidMove(move) {
 			temp := mygame
@@ -42,12 +41,16 @@ func search(depth int, mygame game.Game, playerNum int) int {
 			potentialMoves = append(potentialMoves, temp)
 		}
 	}
-	fmt.Println("do we make it here")
 	if depth == 0 || len(potentialMoves) == 0 || mygame.IsComplete {
 		return stateValuation(mygame, playerNum)
 	}
+	fmt.Print("statevaluation:")
+	fmt.Println(stateValuation(mygame, playerNum))
 	output := -9999999
 	for _, v := range potentialMoves {
+
+		//bla := search(depth-1, v, otherplayer)
+
 		output = Max(output, -search(depth-1, v, otherplayer))
 	}
 	return output

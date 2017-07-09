@@ -2,6 +2,7 @@ package minimax
 
 import (
 	"connect4/game"
+	"fmt"
 	"testing"
 )
 
@@ -56,5 +57,14 @@ func TestHorizStreaks(t *testing.T) {
 				t.Fatalf("Test Diag didn't work, expected %d, got %d for streaklength %d", expected, actual, k)
 			}
 		}
+	}
+}
+
+func TestSearch(t *testing.T) {
+	mygame := game.NewGame()
+	for _, v := range testcasesSearch {
+		mygame.GameBoard = v.mygame
+		a := search(v.depth, *mygame, v.playerNum)
+		fmt.Println(a)
 	}
 }
