@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	//uncomment to play vs the AI
 	// mygame := game.NewGame()
 	//
 	// var input int
