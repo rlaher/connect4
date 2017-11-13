@@ -165,7 +165,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	//i think this line is unnecessary
 	//uncomment if code breaks later on
-	//c.gr.receiveMove <- true
+	c.gr.receiveMove <- true
 
 	//waitgroup waits for reader and writer to both be closed before proceeding
 	var wg sync.WaitGroup

@@ -5,6 +5,7 @@
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
+  background-color: white;
 }
 
 .App-header {
@@ -17,7 +18,35 @@
 .App-intro {
   font-size: large;
 }
+.slot--red{
+    background-color: red;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
 
+}
+.slot--black{
+    background-color:blue;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+
+}
+.slot--empty{
+    background-color:yellow;
+    height:50px;
+    width:50px;
+    border-radius: 50%;
+
+}
+.row{
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+}
+.playersTurn{
+    font-size: 36px;
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

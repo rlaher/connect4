@@ -26,7 +26,7 @@ type Game struct {
 	NumMoves      int
 	IsStarted     bool
 	IsComplete    bool
-	PlayersTurn   int
+	PlayersTurn   int `json:"playersturn"`
 	NumPlayers    int
 	LastMove      [2]int //row, col
 

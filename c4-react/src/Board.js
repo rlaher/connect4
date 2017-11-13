@@ -12,6 +12,7 @@ export default class Board extends Component {
                 board: data.gameboard,
                 status: data.status,
                 numMoves: data.nummoves,
+                playersTurn: data.playersturn,
                 // etc. etc.
             })
             if (data.status==="Game has finished!"){
@@ -50,9 +51,17 @@ export default class Board extends Component {
         })
     }
     render() {
+        const { playersTurn } = this.state
+        console.log(playersTurn)
         return (
+            <div>
+            <div className="playersTurn">
+            Players Turn:
+            {playersTurn  === 0 ? 'Red' : 'Blue'}
+            </div>
             <div className="board">
                 { this.renderBoard() }
+            </div>
             </div>
         )
     }

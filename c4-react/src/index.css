@@ -3,18 +3,3 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
-.slot--red{
-    background-color: red;
-    height: 50px;
-    width: 40px;
-}
-slot--black{
-    background-color:blue;
-    height: 50px;
-    width: 40px;
-}
-slot--empty{
-    background-color:black;
-    height:50px;
-    width:40px;
-}
