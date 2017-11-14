@@ -2,6 +2,7 @@ package main
 
 import (
 	"connect4/game"
+	"connect4/minimax"
 	"fmt"
 	"log"
 	"net/http"
@@ -104,8 +105,6 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 		fmt.Println(clientMoveMessage)
 
 		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32)
-		fmt.Print("conv to int:")
-		fmt.Println(field)
 
 		c.gr.game.MakeMove(c.playerNum, int(field))
 		c.gr.receiveMove <- true
@@ -149,6 +148,7 @@ func matchMaker() (*gameRoom, int) {
 //calls reader and writer go routines
 func handler(w http.ResponseWriter, r *http.Request) {
 	//upgrade to websocket connection for real time updates
+	fmt.Println("handler appears to have been called")
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -174,6 +174,36 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	go c.reader(&wg, conn)
 	wg.Wait()
 	conn.Close()
+}
+
+func minihandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println("connection upgraded!")
+
+	mygame := game.NewGame()
+	err = conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
+	for !mygame.IsComplete {
+		//Reading next move from connection here
+		_, clientMoveMessage, err := conn.ReadMessage()
+		if err != nil {
+			fmt.Println(err.Error())
+			break
+		}
+		fmt.Print("movemessage:")
+		fmt.Println(clientMoveMessage)
+
+		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32)
+
+		mygame.MakeMove(0, int(field))
+		aimove := minimax.Minimax(4, *mygame, 1)
+		mygame.MakeMove(1, aimove)
+		err = conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
+
+	}
 }
 
 // sendGameStateToConnection broadcasts the current gameState as JSON to all players
