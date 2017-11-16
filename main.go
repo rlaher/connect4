@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -29,10 +31,11 @@ func main() {
 	// 	fmt.Println(mygame.BoardAsString6)
 	// }
 	//fmt.Println("game over!")
-	router := http.NewServeMux()
-	router.Handle("/", http.FileServer(http.Dir("./c4-react/build/")))
-	router.HandleFunc("/playai", handler)
-	router.HandleFunc("/ws", minihandler)
+	router := mux.NewRouter()
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./c4-react/build/")))
+	//router.Handle("/", http.FileServer(http.Dir("./c4-react/build/")))
+	router.HandleFunc("/ws1", handler)
+	router.HandleFunc("/ws2", minihandler)
 	log.Printf("serving connect 4 live on localhost: 8080")
-	log.Fatal(http.ListenAndServe("localhost:8080", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
