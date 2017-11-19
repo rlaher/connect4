@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 export default class Board extends Component {
     constructor() {
         super()
-        this.socket = new WebSocket("ws://localhost:8080/ws")
         var gameComplete = false
+        this.socket = new WebSocket("ws://localhost:8080/ws")
         this.socket.onmessage = (e) => {
             const data = JSON.parse(e.data);
             console.log(e.data)
@@ -28,6 +28,7 @@ export default class Board extends Component {
     onClick = (col) => {
         this.socket.send(col)
     }
+  
     renderBoard = () => {
         const { board } = this.state
         return board.map((row) => {
@@ -50,6 +51,10 @@ export default class Board extends Component {
             )
         })
     }
+
+    togglePlayerMode = () =>{
+        this.socket.send(999)
+    }
     render() {
         const { playersTurn } = this.state
         console.log(playersTurn)
@@ -59,8 +64,15 @@ export default class Board extends Component {
             Players Turn:
             {playersTurn  === 0 ? 'Red' : 'Blue'}
             </div>
+           
             <div className="board">
                 { this.renderBoard() }
+            </div>
+            <div className="mode-selector">
+                    <label class="switch">
+                        <input type="checkbox"onClick ={this.togglePlayerMode}/>
+                        <span class="slider">Tick this box to play vs AI</span>
+                    </label>
             </div>
             </div>
         )

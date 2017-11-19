@@ -18,6 +18,7 @@
 .App-intro {
   font-size: large;
 }
+
 .slot--red{
     background-color: red;
     height: 50px;
@@ -29,7 +30,8 @@
     background-color:blue;
     height: 50px;
     width: 50px;
-    border-radius: 50%;
+    border-radius: 50%;  
+
 
 }
 .slot--empty{
@@ -45,7 +47,7 @@
     margin: auto;
 }
 .playersTurn{
-    font-size: 36px;
+    font-size: 24px;
 }
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }

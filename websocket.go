@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var multiplayer = true
+
 // connections is slice of all the pairs of players
 var connections []*gameRoom
 
@@ -86,13 +88,20 @@ func (h *gameRoom) removeConnection(conn *connection) {
 		delete(h.connections, conn)
 		close(conn.doBroadcast)
 	}
-	log.Println("Player disconnected, gameroom shut down")
+	log.Println("Player disconnected, ")
 	//SHOULD DO MORE HERE
 	h.game.Status = game.Broken
+	for i, k := range connections {
+		if h == k {
+			log.Printf("shutting down game room")
+			connections = append(connections[:i], connections[i+1:]...)
+		}
+	}
+
 }
 
 //reads move from websocket and makes move in Game
-func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
+func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn, multiplayerFlag bool) {
 	defer wg.Done()
 	for {
 		//Reading next move from connection here
@@ -101,11 +110,14 @@ func (c *connection) reader(wg *sync.WaitGroup, wsConn *websocket.Conn) {
 			fmt.Println(err.Error())
 			break
 		}
-		fmt.Print("movemessage:")
-		fmt.Println(clientMoveMessage)
+		fmt.Print("message:")
 
 		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32)
-
+		fmt.Println(field)
+		if field == 999 {
+			c.gr.toggleGameMode(wsConn, c, multiplayerFlag)
+			return
+		}
 		c.gr.game.MakeMove(c.playerNum, int(field))
 		c.gr.receiveMove <- true
 		//tells gameRoom that move has occurred
@@ -154,7 +166,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	fmt.Println("connection upgraded!")
+	multiplayerFlag := true
+	twoplayer(conn, multiplayerFlag)
+}
+func twoplayer(conn *websocket.Conn, multiplayerFlag bool) {
 	//Adding Connection to gameRoom
 	gr, pn := matchMaker()
 	c := &connection{doBroadcast: make(chan bool), gr: gr, playerNum: pn}
@@ -171,21 +186,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go c.writer(&wg, conn)
-	go c.reader(&wg, conn)
+	go c.reader(&wg, conn, multiplayerFlag)
 	wg.Wait()
 	conn.Close()
 }
 
-func minihandler(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	fmt.Println("connection upgraded!")
+func oneplayer(conn *websocket.Conn, multiplayerFlag bool) {
+	myGameRoom := newgameRoom()
+	c := &connection{doBroadcast: make(chan bool), gr: myGameRoom, playerNum: 0}
 
-	mygame := game.NewGame()
-	err = conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
+	mygame := myGameRoom.game
+	err := conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
+	if err != nil {
+		fmt.Printf("could not write ")
+	}
 	for !mygame.IsComplete {
 		//Reading next move from connection here
 		_, clientMoveMessage, err := conn.ReadMessage()
@@ -194,9 +208,13 @@ func minihandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		fmt.Print("movemessage:")
-		fmt.Println(clientMoveMessage)
 
 		field, _ := strconv.ParseInt(string(clientMoveMessage[:]), 10, 32)
+		fmt.Println(field)
+		if field == 999 {
+			myGameRoom.toggleGameMode(conn, c, multiplayerFlag)
+			return
+		}
 
 		mygame.MakeMove(0, int(field))
 		aimove := minimax.Minimax(4, *mygame, 1)
@@ -204,6 +222,21 @@ func minihandler(w http.ResponseWriter, r *http.Request) {
 		err = conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
 
 	}
+}
+
+func (h *gameRoom) toggleGameMode(conn *websocket.Conn, c *connection, multiplayerFlag bool) {
+	multiplayer := !multiplayerFlag
+	fmt.Println("multiplayer:")
+	fmt.Println(multiplayer)
+	if !multiplayer {
+		h.removeConnection(c)
+		oneplayer(conn, multiplayer)
+	} else {
+		//might need to call remove connection...
+		twoplayer(conn, multiplayer)
+
+	}
+
 }
 
 // sendGameStateToConnection broadcasts the current gameState as JSON to all players

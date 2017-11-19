@@ -29,13 +29,6 @@ type Game struct {
 	PlayersTurn   int `json:"playersturn"`
 	NumPlayers    int
 	LastMove      [2]int //row, col
-
-	BoardAsString1 string `json:"boardasstring1"`
-	BoardAsString2 string `json:"boardasstring2"`
-	BoardAsString3 string `json:"boardasstring3"`
-	BoardAsString4 string `json:"boardasstring4"`
-	BoardAsString5 string `json:"boardasstring5"`
-	BoardAsString6 string `json:"boardasstring6"`
 }
 
 //struct for each Slot on the board
@@ -55,9 +48,8 @@ func NewGame() *Game {
 		IsStarted:     false,
 		IsComplete:    false,
 
-		NumPlayers:     0,
-		PlayersTurn:    0,
-		BoardAsString1: "No board yet",
+		NumPlayers:  0,
+		PlayersTurn: 0,
 	}
 	return &game
 }
@@ -128,7 +120,6 @@ func (game *Game) MakeMove(playerNum int, move int) {
 
 			game.switchPlayersTurn(playerNum)
 			game.NumMoves++
-			game.BoardAsString1, game.BoardAsString2, game.BoardAsString3, game.BoardAsString4, game.BoardAsString5, game.BoardAsString6 = game.StringBoard()
 
 		}
 	}
