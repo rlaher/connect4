@@ -4,6 +4,7 @@ export default class Board extends Component {
     constructor() {
         super()
         var gameComplete = false
+        //this.socket = new WebSocket("ws://ec2-18-217-35-187.us-east-2.compute.amazonaws.com:8080/ws")
         this.socket = new WebSocket("ws://localhost:8080/ws")
         this.socket.onmessage = (e) => {
             const data = JSON.parse(e.data);
@@ -57,12 +58,15 @@ export default class Board extends Component {
     }
     render() {
         const { playersTurn } = this.state
-        console.log(playersTurn)
+        const {status} = this.state
         return (
             <div>
             <div className="playersTurn">
             Players Turn:
             {playersTurn  === 0 ? 'Red' : 'Blue'}
+            </div>
+            <div className="status">
+            Game Status: {status}
             </div>
            
             <div className="board">

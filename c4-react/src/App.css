@@ -18,7 +18,9 @@
 .App-intro {
   font-size: large;
 }
-
+.board{
+    margin:auto;
+}
 .slot--red{
     background-color: red;
     height: 50px;

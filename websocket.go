@@ -89,6 +89,10 @@ func (h *gameRoom) removeConnection(conn *connection) {
 		close(conn.doBroadcast)
 	}
 	log.Println("Player disconnected, ")
+	// err := wsConn.WriteMessage(websocket.TextMessage, conn.gr.game.JsonEncode())
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 	//SHOULD DO MORE HERE
 	h.game.Status = game.Broken
 	for i, k := range connections {
@@ -196,6 +200,7 @@ func oneplayer(conn *websocket.Conn, multiplayerFlag bool) {
 	c := &connection{doBroadcast: make(chan bool), gr: myGameRoom, playerNum: 0}
 
 	mygame := myGameRoom.game
+	mygame.Status = "You are going to lose against the AI"
 	err := conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
 	if err != nil {
 		fmt.Printf("could not write ")
