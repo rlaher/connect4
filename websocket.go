@@ -200,7 +200,7 @@ func oneplayer(conn *websocket.Conn, multiplayerFlag bool) {
 	c := &connection{doBroadcast: make(chan bool), gr: myGameRoom, playerNum: 0}
 
 	mygame := myGameRoom.game
-	mygame.Status = "You are going to lose against the AI"
+	mygame.Status = "You are now playing the AI"
 	err := conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
 	if err != nil {
 		fmt.Printf("could not write ")
@@ -220,10 +220,22 @@ func oneplayer(conn *websocket.Conn, multiplayerFlag bool) {
 			myGameRoom.toggleGameMode(conn, c, multiplayerFlag)
 			return
 		}
+		if field == 991 {
+			mygame.ComputerDifficulty = 1
+		} else if field == 992 {
+			mygame.ComputerDifficulty = 2
+		} else if field == 993 {
+			mygame.ComputerDifficulty = 3
+		} else if field == 994 {
+			mygame.ComputerDifficulty = 4
+		} else if field == 995 {
+			mygame.ComputerDifficulty = 5
+		} else {
 
-		mygame.MakeMove(0, int(field))
-		aimove := minimax.Minimax(4, *mygame, 1)
-		mygame.MakeMove(1, aimove)
+			mygame.MakeMove(0, int(field))
+			aimove := minimax.Minimax(mygame.ComputerDifficulty, *mygame, 1)
+			mygame.MakeMove(1, aimove)
+		}
 		err = conn.WriteMessage(websocket.TextMessage, mygame.JsonEncode())
 
 	}

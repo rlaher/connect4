@@ -19,16 +19,17 @@ const gameover = "Game has finished!"
 
 //Game holds all the game data
 type Game struct {
-	Status        string                        `json:"status"`
-	GameBoard     [BoardHeight][BoardWidth]Slot `json:"gameboard"`
-	PlayerSymbols []string                      `json:"playersymbols"`
-	Heights       [BoardWidth]int
-	NumMoves      int
-	IsStarted     bool
-	IsComplete    bool
-	PlayersTurn   int `json:"playersturn"`
-	NumPlayers    int
-	LastMove      [2]int //row, col
+	Status             string                        `json:"status"`
+	GameBoard          [BoardHeight][BoardWidth]Slot `json:"gameboard"`
+	PlayerSymbols      []string                      `json:"playersymbols"`
+	Heights            [BoardWidth]int
+	NumMoves           int
+	IsStarted          bool
+	IsComplete         bool
+	PlayersTurn        int `json:"playersturn"`
+	NumPlayers         int
+	LastMove           [2]int //row, col
+	ComputerDifficulty int    `json:"computerdifficulty"`
 }
 
 //struct for each Slot on the board
@@ -40,16 +41,16 @@ type Slot struct {
 //NewGame initializes new game with base values
 func NewGame() *Game {
 	game := Game{
-		Status:        "empty status",
-		GameBoard:     newGameBoard(),
-		PlayerSymbols: []string{0: "X", 1: "O"},
-		Heights:       [BoardWidth]int{},
-		NumMoves:      0,
-		IsStarted:     false,
-		IsComplete:    false,
-
-		NumPlayers:  0,
-		PlayersTurn: 0,
+		Status:             "empty status",
+		GameBoard:          newGameBoard(),
+		PlayerSymbols:      []string{0: "X", 1: "O"},
+		Heights:            [BoardWidth]int{},
+		NumMoves:           0,
+		IsStarted:          false,
+		IsComplete:         false,
+		NumPlayers:         0,
+		PlayersTurn:        0,
+		ComputerDifficulty: 3,
 	}
 	return &game
 }

@@ -1,12 +1,10 @@
 .App {
   text-align: center;
 }
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-  background-color: white;
+body{
+    background-color:#2b2d30;
 }
+
 
 .App-header {
   background-color: #222;
@@ -18,8 +16,59 @@
 .App-intro {
   font-size: large;
 }
+.about-text{
+    padding-left:5px;
+}
 .board{
     margin:auto;
+    padding-top:2%;
+    display: flex;
+    flex-direction: column;
+}
+.big-box{
+    display:flex;
+    flex-direction:row;
+}
+.board-container{
+    background-color:#5c6066;    
+    width: 50%;
+}
+.buttons{
+    display:flex;
+    flex-direction: column;
+    height: 50%;
+    
+}
+.difficulty-button{
+    font-size: 24px;
+    color: #c5cedb;
+    background-color: #566275;
+    border: 2px solid;
+    border-radius: 10px;
+}
+.computer-difficulty{
+    color:#c5cedb;
+}
+.left-panel{
+    width: 20%;
+    background-color: #a7adb7;     
+    margin-left:5%;
+    
+    
+}
+.modeselektor{
+    margin-top: 5%;
+}
+.playersTurn{
+    padding-top:1%;
+    font-size: 24px;
+    color:#c5cedb;
+}
+.right-panel{
+    background-color: #a7adb7;        
+    width: 20%;
+    font-size: 14px;
+    text-align: left;
 }
 .slot--red{
     background-color: red;
@@ -43,18 +92,21 @@
     border-radius: 50%;
 
 }
+.status{
+    padding-top:1%;
+    color:#c5cedb;
+}
 .row{
     display: flex;
     flex-direction: row;
     margin: auto;
 }
-.playersTurn{
-    font-size: 24px;
+
+.welcome{
+    font-size: 32px;
+    color:#c5cedb;
 }
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+
 
 #myboardstring{
     height: 500px
